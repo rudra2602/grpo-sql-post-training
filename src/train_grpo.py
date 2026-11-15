@@ -114,7 +114,6 @@ def main() -> None:
         per_device_train_batch_size=args.batch_size,
         gradient_accumulation_steps=args.gradient_accumulation_steps,
         num_generations=args.group_size,
-        max_prompt_length=args.max_prompt_length,
         max_completion_length=args.max_completion_length,
         temperature=args.temperature,
         top_p=args.top_p,
