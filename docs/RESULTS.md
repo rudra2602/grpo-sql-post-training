@@ -12,9 +12,13 @@ Evaluated on `data/test_logistics.json` (108 held-out questions on unseen logist
 
 | Metric | Base Model (`Qwen2.5-Coder-1.5B-Instruct`) | Post-Trained Model (GRPO LoRA) | Absolute Delta ($\Delta$) | Relative Improvement (%) |
 |---|---|---|---|---|
-| **Execution Accuracy (EX %)** | `TBD %` | `TBD %` | `+TBD %` | `+TBD %` |
-| **Valid SQL Rate (VSR %)** | `TBD %` | `TBD %` | `+TBD %` | `+TBD %` |
-| **Format Adherence Rate (FAR %)** | `TBD %` | `TBD %` | `+TBD %` | `+TBD %` |
+| **Execution Accuracy (EX %)** | **13.89 %** (15/108) | `TBD %` | `+TBD %` | `+TBD %` |
+| **Valid SQL Rate (VSR %)** | **19.44 %** (21/108) | `TBD %` | `+TBD %` | `+TBD %` |
+| **Format Adherence Rate (FAR %)** | **19.44 %** (21/108) | `TBD %` | `+TBD %` | `+TBD %` |
+
+*Per-Database Base Accuracy:*
+* `ship_1` (Maritime vessels & captains): **22.9%** (11/48 correct)
+* `tracking_orders` (Shipment fulfillment & tracking): **6.7%** (4/60 correct)
 
 ---
 
@@ -24,12 +28,12 @@ Breakdown of error causes across all failed queries on the 108 held-out test que
 
 | Failure Taxonomy Category | Base Model Error Count | GRPO Model Error Count | Absolute Reduction | Category Notes |
 |---|---|---|---|---|
-| `SYNTAX_ERROR` | `TBD` | `TBD` | `TBD` | Malformed SQL, unclosed quotes, syntax errors |
-| `SCHEMA_HALLUCINATION` | `TBD` | `TBD` | `TBD` | Hallucinated non-existent tables or columns |
-| `TIMEOUT_ABORT` | `TBD` | `TBD` | `TBD` | Runaway cartesian joins exceeding 1.0s sandbox limit |
-| `EMPTY_RESULT` | `TBD` | `TBD` | `TBD` | Over-filtered queries returning 0 rows unexpectedly |
-| `VALUE_MISMATCH` | `TBD` | `TBD` | `TBD` | Executed cleanly, but row values or projections differed from gold multiset |
-| **Total Failures** | **TBD / 108** | **TBD / 108** | **TBD** | Total incorrect queries |
+| `SYNTAX_ERROR` | **87** (80.6%) | `TBD` | `TBD` | Malformed SQL, unclosed quotes, syntax errors |
+| `SCHEMA_HALLUCINATION` | **0** (0.0%) | `TBD` | `TBD` | Hallucinated non-existent tables or columns |
+| `TIMEOUT_ABORT` | **0** (0.0%) | `TBD` | `TBD` | Runaway cartesian joins exceeding 1.0s sandbox limit |
+| `EMPTY_RESULT` | **0** (0.0%) | `TBD` | `TBD` | Over-filtered queries returning 0 rows unexpectedly |
+| `VALUE_MISMATCH` | **6** (5.6%) | `TBD` | `TBD` | Executed cleanly, but row values or projections differed from gold multiset |
+| **Total Failures** | **93 / 108** (86.11%) | **TBD / 108** | **TBD** | Total incorrect queries |
 
 *(Note: Relational root causes—`JOIN_ERROR`, `CONDITION_ERROR`, `AGGREGATION_ERROR`—are diagnosed through the 3 qualitative case studies below).*
 
