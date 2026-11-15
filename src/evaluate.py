@@ -314,6 +314,10 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+  import os
+  os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+  os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
+
   args = parse_args()
 
   # Workaround for Colab pre-installed torchao (<0.16.0) triggering PEFT version mismatch error

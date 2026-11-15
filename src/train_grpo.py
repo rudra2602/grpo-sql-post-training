@@ -43,6 +43,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--top_p", type=float, default=0.9, help="Rollout top-p sampling.")
     parser.add_argument("--save_steps", type=int, default=25, help="Steps between checkpoint saves.")
     parser.add_argument("--reward_mode", type=str, default="tiered", choices=["tiered", "binary"], help="Reward shaping mode.")
+    parser.add_argument("--use_4bit", action="store_true", default=None, help="Use 4-bit QLoRA (auto-enabled on <=8GB GPUs).")
     parser.add_argument("--wandb_project", type=str, default="grpo-sql-post-training", help="WandB project name.")
     return parser.parse_args()
 
@@ -50,6 +51,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     import os
     os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+    os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
 
     args = parse_args()
 
@@ -66,8 +68,10 @@ def main() -> None:
     import torch
     from datasets import Dataset
     from peft import LoraConfig
-    from transformers import TrainerCallback
+    from transformers import AutoModelForCausalLM, TrainerCallback
     from trl import GRPOConfig, GRPOTrainer
+    import trl.trainer.utils
+    trl.trainer.utils._CHUNKED_LOGPROB_CHUNK_SIZE = 512
     try:
         import wandb
     except ImportError:
@@ -78,6 +82,28 @@ def main() -> None:
         def on_step_end(self, args, state, control, **kwargs):
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
+
+    class SafeGRPOTrainer(GRPOTrainer):
+        """GRPOTrainer with chunked logprob evaluation and prompt-by-prompt generation to fit in 6GB VRAM."""
+        def _get_per_token_logps_and_entropies(self, *args, **kwargs):
+            kwargs["batch_size"] = 2
+            return super()._get_per_token_logps_and_entropies(*args, **kwargs)
+
+        def _generate_single_turn(self, prompt_ids, images, multimodal_fields, num_generations):
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+            if len(prompt_ids) > 1:
+                all_completion_ids = []
+                for p_idx in range(len(prompt_ids)):
+                    comp_ids, _, _ = super()._generate_single_turn(
+                        [prompt_ids[p_idx]],
+                        images[p_idx:p_idx+1] if images else None,
+                        {k: v[p_idx:p_idx+1] for k, v in multimodal_fields.items()} if multimodal_fields else {},
+                        num_generations,
+                    )
+                    all_completion_ids.extend(comp_ids)
+                return all_completion_ids, None, None
+            return super()._generate_single_turn(prompt_ids, images, multimodal_fields, num_generations)
 
     print("=" * 60)
     print("STARTING GRPO POST-TRAINING RUN")
@@ -94,9 +120,15 @@ def main() -> None:
 
     # 1. Prepare Training Dataset
     print("\nLoading curated logistics training dataset...")
+    import re
     data_dict = prepare_grpo_dataset(split="train")
+    # Clean redundant INSERT statements from prompts to prevent activation memory spikes during backward pass
+    data_dict["prompt"] = [
+        re.sub(r"INSERT\s+INTO\s+[^;]+;\s*", "", p, flags=re.IGNORECASE).strip()
+        for p in data_dict["prompt"]
+    ]
     train_dataset = Dataset.from_dict(data_dict)
-    print(f"Loaded {len(train_dataset)} training prompt-SQL pairs.")
+    print(f"Loaded {len(train_dataset)} training prompt-SQL pairs (clean DDL schemas, max ~980 tokens).")
 
     # 2. Configure 16-bit LoRA
     peft_config = LoraConfig(
@@ -147,13 +179,49 @@ def main() -> None:
         save_total_limit=3,
         report_to="wandb" if wandb is not None and wandb.run is not None else "none",
         use_vllm=False,
-        fp16=torch.cuda.is_available(),
+        bf16=torch.cuda.is_bf16_supported() if torch.cuda.is_available() else False,
+        fp16=torch.cuda.is_available() and not torch.cuda.is_bf16_supported(),
     )
 
-    # 5. Initialize GRPOTrainer
+    # 5. Initialize Model and GRPOTrainer
+    # Auto-detect 4-bit quantization on consumer GPUs with <= 8GB VRAM
+    use_4bit = args.use_4bit
+    if use_4bit is None:
+        if torch.cuda.is_available() and torch.cuda.get_device_properties(0).total_memory < 10 * (1024**3):
+            use_4bit = True
+        else:
+            use_4bit = False
+
+    if use_4bit:
+        from transformers import BitsAndBytesConfig
+        from peft import prepare_model_for_kbit_training
+        compute_dtype = torch.bfloat16 if (torch.cuda.is_available() and torch.cuda.is_bf16_supported()) else torch.float16
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=compute_dtype,
+            bnb_4bit_use_double_quant=True,
+        )
+        print("\nLoading base model with 4-bit NF4 QLoRA quantization (optimized for <= 8GB VRAM)...")
+        model = AutoModelForCausalLM.from_pretrained(
+            args.model_name,
+            quantization_config=bnb_config,
+            device_map="auto",
+        )
+        model = prepare_model_for_kbit_training(model)
+    else:
+        print("\nLoading base model onto GPU (device_map=None to avoid meta device offloading)...")
+        model = AutoModelForCausalLM.from_pretrained(
+            args.model_name,
+            torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+            device_map=None,
+        )
+        if torch.cuda.is_available():
+            model.to("cuda")
+
     print("\nInitializing GRPOTrainer...")
-    trainer = GRPOTrainer(
-        model=args.model_name,
+    trainer = SafeGRPOTrainer(
+        model=model,
         reward_funcs=[grpo_reward_wrapper],
         args=training_args,
         train_dataset=train_dataset,
