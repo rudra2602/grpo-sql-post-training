@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Testing & Cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary raw downloads
+data/raw_train_spider.json
+
+# Model Checkpoints & Large artifacts
+checkpoints/
+*.pt
+*.bin
+*.safetensors
+wandb/
+
+# IDE & OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

@@ -1,0 +1,2438 @@
+[
+  {
+    "db_id": "product_catalog",
+    "question": "Find the names of all the catalog entries.",
+    "gold_sql": "SELECT distinct(catalog_entry_name) FROM catalog_contents",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "What are all the catalog entry names?",
+    "gold_sql": "SELECT distinct(catalog_entry_name) FROM catalog_contents",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find the list of attribute data types possessed by more than 3 attribute definitions.",
+    "gold_sql": "SELECT attribute_data_type FROM Attribute_Definitions GROUP BY attribute_data_type HAVING count(*)  >  3",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "What are the attribute data types with more than 3 attribute definitions?",
+    "gold_sql": "SELECT attribute_data_type FROM Attribute_Definitions GROUP BY attribute_data_type HAVING count(*)  >  3",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "What is the attribute data type of the attribute with name \"Green\"?",
+    "gold_sql": "SELECT attribute_data_type FROM Attribute_Definitions WHERE attribute_name  =  \"Green\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find the attribute data type for the attribute named \"Green\".",
+    "gold_sql": "SELECT attribute_data_type FROM Attribute_Definitions WHERE attribute_name  =  \"Green\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find the name and level of catalog structure with level between 5 and 10.",
+    "gold_sql": "SELECT catalog_level_name ,  catalog_level_number FROM Catalog_Structure WHERE catalog_level_number BETWEEN 5 AND 10",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "What are the name and level of catalog structure with level number between 5 and 10",
+    "gold_sql": "SELECT catalog_level_name ,  catalog_level_number FROM Catalog_Structure WHERE catalog_level_number BETWEEN 5 AND 10",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find all the catalog publishers whose name contains \"Murray\"",
+    "gold_sql": "SELECT distinct(catalog_publisher) FROM catalogs WHERE catalog_publisher LIKE \"%Murray%\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Which catalog publishers have substring \"Murray\" in their names?",
+    "gold_sql": "SELECT distinct(catalog_publisher) FROM catalogs WHERE catalog_publisher LIKE \"%Murray%\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Which catalog publisher has published the most catalogs?",
+    "gold_sql": "SELECT catalog_publisher FROM catalogs GROUP BY catalog_publisher ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find the catalog publisher that has the most catalogs.",
+    "gold_sql": "SELECT catalog_publisher FROM catalogs GROUP BY catalog_publisher ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find the names and publication dates of all catalogs that have catalog level number greater than 5.",
+    "gold_sql": "SELECT t1.catalog_name ,  t1.date_of_publication FROM catalogs AS t1 JOIN catalog_structure AS t2 ON t1.catalog_id  =  t2.catalog_id WHERE catalog_level_number  >  5",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "What are the name and publication date of the catalogs with catalog level number above 5?",
+    "gold_sql": "SELECT t1.catalog_name ,  t1.date_of_publication FROM catalogs AS t1 JOIN catalog_structure AS t2 ON t1.catalog_id  =  t2.catalog_id WHERE catalog_level_number  >  5",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "What are the entry names of catalog with the attribute possessed by most entries.",
+    "gold_sql": "SELECT t1.catalog_entry_name FROM Catalog_Contents AS t1 JOIN Catalog_Contents_Additional_Attributes AS t2 ON t1.catalog_entry_id  =  t2.catalog_entry_id WHERE t2.attribute_value  =  (SELECT attribute_value FROM Catalog_Contents_Additional_Attributes GROUP BY attribute_value ORDER BY count(*) DESC LIMIT 1)",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find the entry names of the catalog with the attribute that have the most entries.",
+    "gold_sql": "SELECT t1.catalog_entry_name FROM Catalog_Contents AS t1 JOIN Catalog_Contents_Additional_Attributes AS t2 ON t1.catalog_entry_id  =  t2.catalog_entry_id WHERE t2.attribute_value  =  (SELECT attribute_value FROM Catalog_Contents_Additional_Attributes GROUP BY attribute_value ORDER BY count(*) DESC LIMIT 1)",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "What is the entry name of the most expensive catalog (in USD)?",
+    "gold_sql": "SELECT catalog_entry_name FROM catalog_contents ORDER BY price_in_dollars DESC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find the entry name of the catalog with the highest price (in USD).",
+    "gold_sql": "SELECT catalog_entry_name FROM catalog_contents ORDER BY price_in_dollars DESC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "What is the level name of the cheapest catalog (in USD)?",
+    "gold_sql": "SELECT t2.catalog_level_name FROM catalog_contents AS t1 JOIN catalog_structure AS t2 ON t1.catalog_level_number  =  t2.catalog_level_number ORDER BY t1.price_in_dollars LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find the level name of the catalog with the lowest price (in USD).",
+    "gold_sql": "SELECT t2.catalog_level_name FROM catalog_contents AS t1 JOIN catalog_structure AS t2 ON t1.catalog_level_number  =  t2.catalog_level_number ORDER BY t1.price_in_dollars LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "What are the average and minimum price (in Euro) of all products?",
+    "gold_sql": "SELECT avg(price_in_euros) ,  min(price_in_euros) FROM catalog_contents",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Give me the average and minimum price (in Euro) of the products.",
+    "gold_sql": "SELECT avg(price_in_euros) ,  min(price_in_euros) FROM catalog_contents",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "What is the product with the highest height? Give me the catalog entry name.",
+    "gold_sql": "SELECT catalog_entry_name FROM catalog_contents ORDER BY height DESC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Which catalog content has the highest height? Give me the catalog entry name.",
+    "gold_sql": "SELECT catalog_entry_name FROM catalog_contents ORDER BY height DESC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find the name of the product that has the smallest capacity.",
+    "gold_sql": "SELECT catalog_entry_name FROM catalog_contents ORDER BY capacity ASC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Which catalog content has the smallest capacity? Return the catalog entry name.",
+    "gold_sql": "SELECT catalog_entry_name FROM catalog_contents ORDER BY capacity ASC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find the names of all the products whose stock number starts with \"2\".",
+    "gold_sql": "SELECT catalog_entry_name FROM catalog_contents WHERE product_stock_number LIKE \"2%\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Which catalog contents have a product stock number that starts from \"2\"? Show the catalog entry names.",
+    "gold_sql": "SELECT catalog_entry_name FROM catalog_contents WHERE product_stock_number LIKE \"2%\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find the names of catalog entries with level number 8.",
+    "gold_sql": "SELECT t1.catalog_entry_name FROM Catalog_Contents AS t1 JOIN Catalog_Contents_Additional_Attributes AS t2 ON t1.catalog_entry_id  =  t2.catalog_entry_id WHERE t2.catalog_level_number  =  \"8\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "What are the names of catalog entries with level number 8?",
+    "gold_sql": "SELECT t1.catalog_entry_name FROM Catalog_Contents AS t1 JOIN Catalog_Contents_Additional_Attributes AS t2 ON t1.catalog_entry_id  =  t2.catalog_entry_id WHERE t2.catalog_level_number  =  \"8\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find the names of the products with length smaller than 3 or height greater than 5.",
+    "gold_sql": "SELECT catalog_entry_name FROM catalog_contents WHERE LENGTH  <  3 OR width  >  5",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Which catalog contents have length below 3 or above 5? Find the catalog entry names.",
+    "gold_sql": "SELECT catalog_entry_name FROM catalog_contents WHERE LENGTH  <  3 OR width  >  5",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find the name and attribute ID of the attribute definitions with attribute value 0.",
+    "gold_sql": "SELECT t1.attribute_name ,  t1.attribute_id FROM Attribute_Definitions AS t1 JOIN Catalog_Contents_Additional_Attributes AS t2 ON t1.attribute_id  =  t2.attribute_id WHERE t2.attribute_value  =  0",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Which attribute definitions have attribute value 0? Give me the attribute name and attribute ID.",
+    "gold_sql": "SELECT t1.attribute_name ,  t1.attribute_id FROM Attribute_Definitions AS t1 JOIN Catalog_Contents_Additional_Attributes AS t2 ON t1.attribute_id  =  t2.attribute_id WHERE t2.attribute_value  =  0",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find the name and capacity of products with price greater than 700 (in USD).",
+    "gold_sql": "SELECT catalog_entry_name ,  capacity FROM Catalog_Contents WHERE price_in_dollars  >  700",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Which catalog contents has price above 700 dollars? Show their catalog entry names and capacities.",
+    "gold_sql": "SELECT catalog_entry_name ,  capacity FROM Catalog_Contents WHERE price_in_dollars  >  700",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find the dates on which more than one revisions were made.",
+    "gold_sql": "SELECT date_of_latest_revision FROM Catalogs GROUP BY date_of_latest_revision HAVING count(*)  >  1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "On which days more than one revisions were made on catalogs.",
+    "gold_sql": "SELECT date_of_latest_revision FROM Catalogs GROUP BY date_of_latest_revision HAVING count(*)  >  1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "How many products are there in the records?",
+    "gold_sql": "SELECT count(*) FROM catalog_contents",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Find the total number of catalog contents.",
+    "gold_sql": "SELECT count(*) FROM catalog_contents",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "Name all the products with next entry ID greater than 8.",
+    "gold_sql": "SELECT catalog_entry_name FROM catalog_contents WHERE next_entry_id  >  8",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "product_catalog",
+    "question": "What are the catalog entry names of the products with next entry ID above 8?",
+    "gold_sql": "SELECT catalog_entry_name FROM catalog_contents WHERE next_entry_id  >  8",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show the number of accounts.",
+    "gold_sql": "SELECT count(*) FROM Accounts",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "How many accounts are there?",
+    "gold_sql": "SELECT count(*) FROM Accounts",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "How many customers have opened an account?",
+    "gold_sql": "SELECT count(DISTINCT customer_id) FROM Accounts",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Count the number of customers who have an account.",
+    "gold_sql": "SELECT count(DISTINCT customer_id) FROM Accounts",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show the id, the date of account opened, the account name, and other account detail for all accounts.",
+    "gold_sql": "SELECT account_id ,  date_account_opened ,  account_name ,  other_account_details FROM Accounts",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are the ids, date opened, name, and other details for all accounts?",
+    "gold_sql": "SELECT account_id ,  date_account_opened ,  account_name ,  other_account_details FROM Accounts",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show the id, the account name, and other account details for all accounts by the customer with first name 'Meaghan'.",
+    "gold_sql": "SELECT T1.account_id ,  T1.date_account_opened ,  T1.account_name ,  T1.other_account_details FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE T2.customer_first_name  =  'Meaghan'",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are the ids, names, dates of opening, and other details for accounts corresponding to the customer with the first name \"Meaghan\"?",
+    "gold_sql": "SELECT T1.account_id ,  T1.date_account_opened ,  T1.account_name ,  T1.other_account_details FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE T2.customer_first_name  =  'Meaghan'",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show the account name and other account detail for all accounts by the customer with first name Meaghan and last name Keeling.",
+    "gold_sql": "SELECT T1.account_name ,  T1.other_account_details FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE T2.customer_first_name  =  \"Meaghan\" AND T2.customer_last_name  =  \"Keeling\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are the names and other details for accounts corresponding to the customer named Meaghan Keeling?",
+    "gold_sql": "SELECT T1.account_name ,  T1.other_account_details FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE T2.customer_first_name  =  \"Meaghan\" AND T2.customer_last_name  =  \"Keeling\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show the first name and last name for the customer with account name 900.",
+    "gold_sql": "SELECT T2.customer_first_name ,  T2.customer_last_name FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE T1.account_name  =  \"900\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are the full names of customers with the account name 900?",
+    "gold_sql": "SELECT T2.customer_first_name ,  T2.customer_last_name FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id WHERE T1.account_name  =  \"900\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "How many customers don't have an account?",
+    "gold_sql": "SELECT count(*) FROM Customers WHERE customer_id NOT IN (SELECT customer_id FROM Accounts)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Count the number of customers who do not have an account.",
+    "gold_sql": "SELECT count(*) FROM Customers WHERE customer_id NOT IN (SELECT customer_id FROM Accounts)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show the unique first names, last names, and phone numbers for all customers with any account.",
+    "gold_sql": "SELECT DISTINCT T1.customer_first_name ,  T1.customer_last_name ,  T1.phone_number FROM Customers AS T1 JOIN Accounts AS T2 ON T1.customer_id  =  T2.customer_id",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are the distinct first names, last names, and phone numbers for customers with accounts?",
+    "gold_sql": "SELECT DISTINCT T1.customer_first_name ,  T1.customer_last_name ,  T1.phone_number FROM Customers AS T1 JOIN Accounts AS T2 ON T1.customer_id  =  T2.customer_id",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show customer ids who don't have an account.",
+    "gold_sql": "SELECT customer_id FROM Customers EXCEPT SELECT customer_id FROM Accounts",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are the customer ids for customers who do not have an account?",
+    "gold_sql": "SELECT customer_id FROM Customers EXCEPT SELECT customer_id FROM Accounts",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "How many accounts does each customer have? List the number and customer id.",
+    "gold_sql": "SELECT count(*) ,  customer_id FROM Accounts GROUP BY customer_id",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Count the number of accounts corresponding to each customer id.",
+    "gold_sql": "SELECT count(*) ,  customer_id FROM Accounts GROUP BY customer_id",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What is the customer id, first and last name with most number of accounts.",
+    "gold_sql": "SELECT T1.customer_id ,  T2.customer_first_name ,  T2.customer_last_name FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Return the id and full name of the customer with the most accounts.",
+    "gold_sql": "SELECT T1.customer_id ,  T2.customer_first_name ,  T2.customer_last_name FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show id, first name and last name for all customers and the number of accounts.",
+    "gold_sql": "SELECT T1.customer_id ,  T2.customer_first_name ,  T2.customer_last_name ,  count(*) FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are the the full names and ids for all customers, and how many accounts does each have?",
+    "gold_sql": "SELECT T1.customer_id ,  T2.customer_first_name ,  T2.customer_last_name ,  count(*) FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show first name and id for all customers with at least 2 accounts.",
+    "gold_sql": "SELECT T2.customer_first_name ,  T1.customer_id FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id HAVING count(*)  >=  2",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are the first names and ids for customers who have two or more accounts?",
+    "gold_sql": "SELECT T2.customer_first_name ,  T1.customer_id FROM Accounts AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id HAVING count(*)  >=  2",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show the number of customers.",
+    "gold_sql": "SELECT count(*) FROM Customers",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Count the number of customers.",
+    "gold_sql": "SELECT count(*) FROM Customers",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show the number of customers for each gender.",
+    "gold_sql": "SELECT gender ,  count(*) FROM Customers GROUP BY gender",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "How many customers are there of each gender?",
+    "gold_sql": "SELECT gender ,  count(*) FROM Customers GROUP BY gender",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "How many transactions do we have?",
+    "gold_sql": "SELECT count(*) FROM Financial_transactions",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Count the number of transactions.",
+    "gold_sql": "SELECT count(*) FROM Financial_transactions",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "How many transaction does each account have? Show the number and account id.",
+    "gold_sql": "SELECT count(*) ,  account_id FROM Financial_transactions",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Count the number of financial transactions that correspond to each account id.",
+    "gold_sql": "SELECT count(*) ,  account_id FROM Financial_transactions",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "How many transaction does account with name 337 have?",
+    "gold_sql": "SELECT count(*) FROM Financial_transactions AS T1 JOIN Accounts AS T2 ON T1.account_id  =  T2.account_id WHERE T2.account_name  =  \"337\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Count the number of financial transactions that the account with the name 337 has.",
+    "gold_sql": "SELECT count(*) FROM Financial_transactions AS T1 JOIN Accounts AS T2 ON T1.account_id  =  T2.account_id WHERE T2.account_name  =  \"337\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What is the average, minimum, maximum, and total transaction amount?",
+    "gold_sql": "SELECT avg(transaction_amount) ,  min(transaction_amount) ,  max(transaction_amount) ,   sum(transaction_amount) FROM Financial_transactions",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Return the average, minimum, maximum, and total transaction amounts.",
+    "gold_sql": "SELECT avg(transaction_amount) ,  min(transaction_amount) ,  max(transaction_amount) ,   sum(transaction_amount) FROM Financial_transactions",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show ids for all transactions whose amounts are greater than the average.",
+    "gold_sql": "SELECT transaction_id FROM Financial_transactions WHERE transaction_amount  >  (SELECT avg(transaction_amount) FROM Financial_transactions)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are the ids for transactions that have an amount greater than the average amount of a transaction?",
+    "gold_sql": "SELECT transaction_id FROM Financial_transactions WHERE transaction_amount  >  (SELECT avg(transaction_amount) FROM Financial_transactions)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show the transaction types and the total amount of transactions.",
+    "gold_sql": "SELECT transaction_type ,  sum(transaction_amount) FROM Financial_transactions GROUP BY transaction_type",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are total transaction amounts for each transaction type?",
+    "gold_sql": "SELECT transaction_type ,  sum(transaction_amount) FROM Financial_transactions GROUP BY transaction_type",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show the account name, id and the number of transactions for each account.",
+    "gold_sql": "SELECT T2.account_name ,  T1.account_id ,  count(*) FROM Financial_transactions AS T1 JOIN Accounts AS T2 ON T1.account_id  =  T2.account_id GROUP BY T1.account_id",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Return the names and ids of each account, as well as the number of transactions.",
+    "gold_sql": "SELECT T2.account_name ,  T1.account_id ,  count(*) FROM Financial_transactions AS T1 JOIN Accounts AS T2 ON T1.account_id  =  T2.account_id GROUP BY T1.account_id",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show the account id with most number of transactions.",
+    "gold_sql": "SELECT account_id FROM Financial_transactions GROUP BY account_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What is the id of the account with the most transactions?",
+    "gold_sql": "SELECT account_id FROM Financial_transactions GROUP BY account_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show the account id and name with at least 4 transactions.",
+    "gold_sql": "SELECT T1.account_id ,  T2.account_name FROM Financial_transactions AS T1 JOIN Accounts AS T2 ON T1.account_id  =  T2.account_id GROUP BY T1.account_id HAVING count(*)  >=  4",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are the ids and names of accounts with 4 or more transactions?",
+    "gold_sql": "SELECT T1.account_id ,  T2.account_name FROM Financial_transactions AS T1 JOIN Accounts AS T2 ON T1.account_id  =  T2.account_id GROUP BY T1.account_id HAVING count(*)  >=  4",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show all product sizes.",
+    "gold_sql": "SELECT DISTINCT product_size FROM Products",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are the different product sizes?",
+    "gold_sql": "SELECT DISTINCT product_size FROM Products",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show all product colors.",
+    "gold_sql": "SELECT DISTINCT product_color FROM Products",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are the different product colors?",
+    "gold_sql": "SELECT DISTINCT product_color FROM Products",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show the invoice number and the number of transactions for each invoice.",
+    "gold_sql": "SELECT invoice_number ,  count(*) FROM Financial_transactions GROUP BY invoice_number",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "How many transactions correspond to each invoice number?",
+    "gold_sql": "SELECT invoice_number ,  count(*) FROM Financial_transactions GROUP BY invoice_number",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What is the invoice number and invoice date for the invoice with most number of transactions?",
+    "gold_sql": "SELECT T2.invoice_number ,  T2.invoice_date FROM Financial_transactions AS T1 JOIN Invoices AS T2 ON T1.invoice_number  =  T2.invoice_number GROUP BY T1.invoice_number ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What is the invoice number and invoice date corresponding to the invoice with the greatest number of transactions?",
+    "gold_sql": "SELECT T2.invoice_number ,  T2.invoice_date FROM Financial_transactions AS T1 JOIN Invoices AS T2 ON T1.invoice_number  =  T2.invoice_number GROUP BY T1.invoice_number ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "How many invoices do we have?",
+    "gold_sql": "SELECT count(*) FROM Invoices",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Count the number of invoices.",
+    "gold_sql": "SELECT count(*) FROM Invoices",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show invoice dates and order id and details for all invoices.",
+    "gold_sql": "SELECT T1.invoice_date ,  T1.order_id ,  T2.order_details FROM Invoices AS T1 JOIN Orders AS T2 ON T1.order_id  =  T2.order_id",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are the invoice dates, order ids, and order details for all invoices?",
+    "gold_sql": "SELECT T1.invoice_date ,  T1.order_id ,  T2.order_details FROM Invoices AS T1 JOIN Orders AS T2 ON T1.order_id  =  T2.order_id",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show the order ids and the number of invoices for each order.",
+    "gold_sql": "SELECT order_id ,  count(*) FROM Invoices GROUP BY order_id",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "How many invoices correspond to each order id?",
+    "gold_sql": "SELECT order_id ,  count(*) FROM Invoices GROUP BY order_id",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What is the order id and order details for the order more than two invoices.",
+    "gold_sql": "SELECT T2.order_id ,  T2.order_details FROM Invoices AS T1 JOIN Orders AS T2 ON T1.order_id  =  T2.order_id GROUP BY T2.order_id HAVING count(*)  >  2",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Return the order ids and details for orderes with two or more invoices.",
+    "gold_sql": "SELECT T2.order_id ,  T2.order_details FROM Invoices AS T1 JOIN Orders AS T2 ON T1.order_id  =  T2.order_id GROUP BY T2.order_id HAVING count(*)  >  2",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What is the customer last name, id and phone number with most number of orders?",
+    "gold_sql": "SELECT T2.customer_last_name ,  T1.customer_id ,  T2.phone_number FROM Orders AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Return the last name, id and phone number of the customer who has made the greatest number of orders.",
+    "gold_sql": "SELECT T2.customer_last_name ,  T1.customer_id ,  T2.phone_number FROM Orders AS T1 JOIN Customers AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show all product names without an order.",
+    "gold_sql": "SELECT product_name FROM Products EXCEPT SELECT T1.product_name FROM Products AS T1 JOIN Order_items AS T2 ON T1.product_id  =  T2.product_id",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are the names of products that have never been ordered?",
+    "gold_sql": "SELECT product_name FROM Products EXCEPT SELECT T1.product_name FROM Products AS T1 JOIN Order_items AS T2 ON T1.product_id  =  T2.product_id",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show all product names and the total quantity ordered for each product name.",
+    "gold_sql": "SELECT T2.product_name ,  sum(T1.product_quantity) FROM Order_items AS T1 JOIN Products AS T2 ON T1.product_id  =  T2.product_id GROUP BY T2.product_name",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are the different product names, and what is the sum of quantity ordered for each product?",
+    "gold_sql": "SELECT T2.product_name ,  sum(T1.product_quantity) FROM Order_items AS T1 JOIN Products AS T2 ON T1.product_id  =  T2.product_id GROUP BY T2.product_name",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show the order ids and the number of items in each order.",
+    "gold_sql": "SELECT order_id ,  count(*) FROM Order_items GROUP BY order_id",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "How many order items correspond to each order id?",
+    "gold_sql": "SELECT order_id ,  count(*) FROM Order_items GROUP BY order_id",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show the product ids and the number of unique orders containing each product.",
+    "gold_sql": "SELECT product_id ,  count(DISTINCT order_id) FROM Order_items GROUP BY product_id",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "How many distinct order ids correspond to each product?",
+    "gold_sql": "SELECT product_id ,  count(DISTINCT order_id) FROM Order_items GROUP BY product_id",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show all product names and the number of customers having an order on each product.",
+    "gold_sql": "SELECT T2.product_name ,  count(*) FROM Order_items AS T1 JOIN Products AS T2 ON T1.product_id  =  T2.product_id JOIN Orders AS T3 ON T3.order_id  =  T1.order_id GROUP BY T2.product_name",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "What are teh names of the different products, as well as the number of customers who have ordered each product.",
+    "gold_sql": "SELECT T2.product_name ,  count(*) FROM Order_items AS T1 JOIN Products AS T2 ON T1.product_id  =  T2.product_id JOIN Orders AS T3 ON T3.order_id  =  T1.order_id GROUP BY T2.product_name",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show order ids and the number of products in each order.",
+    "gold_sql": "SELECT order_id ,  count(DISTINCT product_id) FROM Order_items GROUP BY order_id",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "How many different products correspond to each order id?",
+    "gold_sql": "SELECT order_id ,  count(DISTINCT product_id) FROM Order_items GROUP BY order_id",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Show order ids and the total quantity in each order.",
+    "gold_sql": "SELECT order_id ,  sum(product_quantity) FROM Order_items GROUP BY order_id",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Give the order ids for all orders, as well as the total product quantity in each.",
+    "gold_sql": "SELECT order_id ,  sum(product_quantity) FROM Order_items GROUP BY order_id",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "How many products were not included in any order?",
+    "gold_sql": "SELECT count(*) FROM products WHERE product_id NOT IN ( SELECT product_id FROM Order_items )",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_invoices",
+    "question": "Count the number of products that were never ordered.",
+    "gold_sql": "SELECT count(*) FROM products WHERE product_id NOT IN ( SELECT product_id FROM Order_items )",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "Are the customers holding coupons with amount 500 bad or good?",
+    "gold_sql": "SELECT T1.good_or_bad_customer FROM customers AS T1 JOIN discount_coupons AS T2 ON T1.coupon_id  =  T2.coupon_id WHERE T2.coupon_amount  =  500",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "How many bookings did each customer make? List the customer id, first name, and the count.",
+    "gold_sql": "SELECT T1.customer_id ,  T1.first_name ,  count(*) FROM Customers AS T1 JOIN bookings AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "What is the maximum total amount paid by a customer? List the customer id and amount.",
+    "gold_sql": "SELECT customer_id ,  sum(amount_paid) FROM Payments GROUP BY customer_id ORDER BY sum(amount_paid) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "What are the id and the amount of refund of the booking that incurred the most times of payments?",
+    "gold_sql": "SELECT T1.booking_id ,  T1.amount_of_refund FROM Bookings AS T1 JOIN Payments AS T2 ON T1.booking_id  =  T2.booking_id GROUP BY T1.booking_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "What is the id of the product that is booked for 3 times?",
+    "gold_sql": "SELECT product_id FROM products_booked GROUP BY product_id HAVING count(*)  =  3",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "What is the product description of the product booked with an amount of 102.76?",
+    "gold_sql": "SELECT T2.product_description FROM products_booked AS T1 JOIN products_for_hire AS T2 ON T1.product_id  =  T2.product_id WHERE T1.booked_amount  =  102.76",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "What are the start date and end date of the booking that has booked the product named 'Book collection A'?",
+    "gold_sql": "SELECT T3.booking_start_date ,   T3.booking_end_date FROM Products_for_hire AS T1 JOIN products_booked AS T2 ON T1.product_id  =  T2.product_id JOIN bookings AS T3 ON T2.booking_id  =  T3.booking_id WHERE T1.product_name  =  'Book collection A'",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "What are the names of products whose availability equals to 1?",
+    "gold_sql": "SELECT T2.product_name FROM view_product_availability AS T1 JOIN products_for_hire AS T2 ON T1.product_id  =  T2.product_id WHERE T1.available_yn  =  1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "How many different product types are there?",
+    "gold_sql": "SELECT count(DISTINCT product_type_code) FROM products_for_hire",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "What are the first name, last name, and gender of all the good customers? Order by their last name.",
+    "gold_sql": "SELECT first_name ,  last_name ,  gender_mf FROM customers WHERE good_or_bad_customer  =  'good' ORDER BY last_name",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "What is the average amount due for all the payments?",
+    "gold_sql": "SELECT avg(amount_due) FROM payments",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "What are the maximum, minimum, and average booked count for the products booked?",
+    "gold_sql": "SELECT max(booked_count) ,  min(booked_count) ,  avg(booked_count) FROM products_booked",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "What are all the distinct payment types?",
+    "gold_sql": "SELECT DISTINCT payment_type_code FROM payments",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "What are the daily hire costs for the products with substring 'Book' in its name?",
+    "gold_sql": "SELECT daily_hire_cost FROM Products_for_hire WHERE product_name LIKE '%Book%'",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "How many products are never booked with amount higher than 200?",
+    "gold_sql": "SELECT count(*) FROM Products_for_hire WHERE product_id NOT IN ( SELECT product_id FROM products_booked WHERE booked_amount  >  200 )",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "What are the coupon amount of the coupons owned by both good and bad customers?",
+    "gold_sql": "SELECT T1.coupon_amount FROM Discount_Coupons AS T1 JOIN customers AS T2 ON T1.coupon_id  =  T2.coupon_id WHERE T2.good_or_bad_customer  =  'good' INTERSECT SELECT T1.coupon_amount FROM Discount_Coupons AS T1 JOIN customers AS T2 ON T1.coupon_id  =  T2.coupon_id WHERE T2.good_or_bad_customer  =  'bad'",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "What are the payment date of the payment with amount paid higher than 300 or with payment type is 'Check'",
+    "gold_sql": "SELECT payment_date FROM payments WHERE amount_paid  >  300 OR payment_type_code  =  'Check'",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "products_for_hire",
+    "question": "What are the names and descriptions of the products that are of 'Cutlery' type and have daily hire cost lower than 20?",
+    "gold_sql": "SELECT product_name ,  product_description FROM products_for_hire WHERE product_type_code  =  'Cutlery' AND daily_hire_cost  <  20",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customer_deliveries",
+    "question": "Find the ids of orders whose status is 'Success'.",
+    "gold_sql": "SELECT actual_order_id FROM actual_orders WHERE order_status_code  =  'Success'",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customer_deliveries",
+    "question": "Find the name and price of the product that has been ordered the greatest number of times.",
+    "gold_sql": "SELECT t1.product_name ,   t1.product_price FROM products AS t1 JOIN regular_order_products AS t2 ON t1.product_id  =  t2.product_id GROUP BY t2.product_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customer_deliveries",
+    "question": "Find the number of customers in total.",
+    "gold_sql": "SELECT count(*) FROM customers",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customer_deliveries",
+    "question": "How many different payment methods are there?",
+    "gold_sql": "SELECT count(DISTINCT payment_method) FROM customers",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customer_deliveries",
+    "question": "Show the details of all trucks in the order of their license number.",
+    "gold_sql": "SELECT truck_details FROM trucks ORDER BY truck_licence_number",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customer_deliveries",
+    "question": "Find the name of the most expensive product.",
+    "gold_sql": "SELECT product_name FROM products ORDER BY product_price DESC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customer_deliveries",
+    "question": "Find the names of customers who are not living in the state of California.",
+    "gold_sql": "SELECT customer_name FROM customers EXCEPT SELECT t1.customer_name FROM customers AS t1 JOIN customer_addresses AS t2 ON t1.customer_id  =  t2.customer_id JOIN addresses AS t3 ON t2.address_id  =  t3.address_id WHERE t3.state_province_county  =  'California'",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "customer_deliveries",
+    "question": "List the names and emails of customers who payed by Visa card.",
+    "gold_sql": "SELECT customer_email ,  customer_name FROM customers WHERE payment_method  =  'Visa'",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customer_deliveries",
+    "question": "Find the names and phone numbers of customers living in California state.",
+    "gold_sql": "SELECT t1.customer_name ,  t1.customer_phone FROM customers AS t1 JOIN customer_addresses AS t2 ON t1.customer_id  =  t2.customer_id JOIN addresses AS t3 ON t2.address_id  =  t3.address_id WHERE t3.state_province_county  =  'California'",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customer_deliveries",
+    "question": "Find the states which do not have any employee in their record.",
+    "gold_sql": "SELECT state_province_county FROM addresses WHERE address_id NOT IN (SELECT employee_address_id FROM Employees)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customer_deliveries",
+    "question": "List the names, phone numbers, and emails of all customers sorted by their dates of becoming customers.",
+    "gold_sql": "SELECT customer_name ,  customer_phone ,  customer_email FROM Customers ORDER BY date_became_customer",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customer_deliveries",
+    "question": "Find the name of the first 5 customers.",
+    "gold_sql": "SELECT customer_name FROM Customers ORDER BY date_became_customer LIMIT 5",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customer_deliveries",
+    "question": "Find the payment method that is used most frequently.",
+    "gold_sql": "SELECT payment_method FROM Customers GROUP BY payment_method ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customer_deliveries",
+    "question": "List the names of all routes in alphabetic order.",
+    "gold_sql": "SELECT route_name FROM Delivery_Routes ORDER BY route_name",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customer_deliveries",
+    "question": "Find the name of route that has the highest number of deliveries.",
+    "gold_sql": "SELECT t1.route_name FROM Delivery_Routes AS t1 JOIN Delivery_Route_Locations AS t2 ON t1.route_id  =  t2.route_id GROUP BY t1.route_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customer_deliveries",
+    "question": "List the state names and the number of customers living in each state.",
+    "gold_sql": "SELECT t2.state_province_county ,  count(*) FROM customer_addresses AS t1 JOIN addresses AS t2 ON t1.address_id  =  t2.address_id GROUP BY t2.state_province_county",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "How many ships are there?",
+    "gold_sql": "SELECT count(*) FROM ship",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "What is the number of ships?",
+    "gold_sql": "SELECT count(*) FROM ship",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "List the name of ships in ascending order of tonnage.",
+    "gold_sql": "SELECT Name FROM ship ORDER BY Tonnage ASC",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "what are the names of the ships ordered by ascending tonnage?",
+    "gold_sql": "SELECT Name FROM ship ORDER BY Tonnage ASC",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "What are the type and nationality of ships?",
+    "gold_sql": "SELECT TYPE ,  Nationality FROM ship",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "What are the types and nationalities of every ship?",
+    "gold_sql": "SELECT TYPE ,  Nationality FROM ship",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "List the name of ships whose nationality is not \"United States\".",
+    "gold_sql": "SELECT Name FROM ship WHERE Nationality != \"United States\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "What are the names of the ships that are not from the United States?",
+    "gold_sql": "SELECT Name FROM ship WHERE Nationality != \"United States\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "Show the name of ships whose nationality is either United States or United Kingdom.",
+    "gold_sql": "SELECT Name FROM ship WHERE Nationality  =  \"United States\" OR Nationality  =  \"United Kingdom\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "What are the names of the ships  that are from either the US or the UK?",
+    "gold_sql": "SELECT Name FROM ship WHERE Nationality  =  \"United States\" OR Nationality  =  \"United Kingdom\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "What is the name of the ship with the largest tonnage?",
+    "gold_sql": "SELECT Name FROM ship ORDER BY Tonnage DESC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "What is the ship with the largest amount of tonnage called?",
+    "gold_sql": "SELECT Name FROM ship ORDER BY Tonnage DESC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "Show different types of ships and the number of ships of each type.",
+    "gold_sql": "SELECT TYPE ,  COUNT(*) FROM ship GROUP BY TYPE",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "For each type, how many ships are there?",
+    "gold_sql": "SELECT TYPE ,  COUNT(*) FROM ship GROUP BY TYPE",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "Please show the most common type of ships.",
+    "gold_sql": "SELECT TYPE FROM ship GROUP BY TYPE ORDER BY COUNT(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "What is the most common type of ships?",
+    "gold_sql": "SELECT TYPE FROM ship GROUP BY TYPE ORDER BY COUNT(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "List the nations that have more than two ships.",
+    "gold_sql": "SELECT Nationality FROM ship GROUP BY Nationality HAVING COUNT(*)  >  2",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "What are the nations that have more than two ships?",
+    "gold_sql": "SELECT Nationality FROM ship GROUP BY Nationality HAVING COUNT(*)  >  2",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "Show different types of ships and the average tonnage of ships of each type.",
+    "gold_sql": "SELECT TYPE ,  avg(Tonnage) FROM ship GROUP BY TYPE",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "For each type, what is the average tonnage?",
+    "gold_sql": "SELECT TYPE ,  avg(Tonnage) FROM ship GROUP BY TYPE",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "Show codes and fates of missions, and names of ships involved.",
+    "gold_sql": "SELECT T1.Code ,  T1.Fate ,  T2.Name FROM mission AS T1 JOIN ship AS T2 ON T1.Ship_ID  =  T2.Ship_ID",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "What are the mission codes, fates, and names of the ships involved?",
+    "gold_sql": "SELECT T1.Code ,  T1.Fate ,  T2.Name FROM mission AS T1 JOIN ship AS T2 ON T1.Ship_ID  =  T2.Ship_ID",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "Show names of ships involved in a mission launched after 1928.",
+    "gold_sql": "SELECT T2.Name FROM mission AS T1 JOIN ship AS T2 ON T1.Ship_ID  =  T2.Ship_ID WHERE T1.Launched_Year  >  1928",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "What are the names of ships that were involved in a mission launched after 1928?",
+    "gold_sql": "SELECT T2.Name FROM mission AS T1 JOIN ship AS T2 ON T1.Ship_ID  =  T2.Ship_ID WHERE T1.Launched_Year  >  1928",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "Show the distinct fate of missions that involve ships with nationality \"United States\"",
+    "gold_sql": "SELECT DISTINCT T1.Fate FROM mission AS T1 JOIN ship AS T2 ON T1.Ship_ID  =  T2.Ship_ID WHERE T2.Nationality  =  \"United States\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "What are the different fates of the mission that involved ships from the United States?",
+    "gold_sql": "SELECT DISTINCT T1.Fate FROM mission AS T1 JOIN ship AS T2 ON T1.Ship_ID  =  T2.Ship_ID WHERE T2.Nationality  =  \"United States\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "List the name of ships that are not involved in any mission",
+    "gold_sql": "SELECT Name FROM ship WHERE Ship_ID NOT IN (SELECT Ship_ID FROM mission)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "What are the names of the ships that are not involved in any missions?",
+    "gold_sql": "SELECT Name FROM ship WHERE Ship_ID NOT IN (SELECT Ship_ID FROM mission)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "Show the types of ships that have both ships with tonnage larger than 6000 and ships with tonnage smaller than 4000.",
+    "gold_sql": "SELECT TYPE FROM ship WHERE Tonnage  >  6000 INTERSECT SELECT TYPE FROM ship WHERE Tonnage  <  4000",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "ship_mission",
+    "question": "What are the types of the ships that have both shiips with tonnage more than 6000 and those with tonnage less than 4000?",
+    "gold_sql": "SELECT TYPE FROM ship WHERE Tonnage  >  6000 INTERSECT SELECT TYPE FROM ship WHERE Tonnage  <  4000",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the ids of the top three products that were purchased in the largest amount?",
+    "gold_sql": "SELECT product_id FROM product_suppliers ORDER BY total_amount_purchased DESC LIMIT 3",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Give the ids of the three products purchased in the largest amounts.",
+    "gold_sql": "SELECT product_id FROM product_suppliers ORDER BY total_amount_purchased DESC LIMIT 3",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the product id and product type of the cheapest product?",
+    "gold_sql": "SELECT product_id ,  product_type_code FROM products ORDER BY product_price LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Give the id and product type of the product with the lowest price.",
+    "gold_sql": "SELECT product_id ,  product_type_code FROM products ORDER BY product_price LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Find the number of different product types.",
+    "gold_sql": "SELECT count(DISTINCT product_type_code) FROM products",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Count the number of distinct product types.",
+    "gold_sql": "SELECT count(DISTINCT product_type_code) FROM products",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the address of customer 10.",
+    "gold_sql": "SELECT T1.address_details FROM addresses AS T1 JOIN customer_addresses AS T2 ON T1.address_id  =  T2.address_id WHERE T2.customer_id  =  10",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What is the address for the customer with id 10?",
+    "gold_sql": "SELECT T1.address_details FROM addresses AS T1 JOIN customer_addresses AS T2 ON T1.address_id  =  T2.address_id WHERE T2.customer_id  =  10",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the staff ids and genders of all staffs whose job title is Department Manager?",
+    "gold_sql": "SELECT T1.staff_id ,  T1.staff_gender FROM staff AS T1 JOIN staff_department_assignments AS T2 ON T1.staff_id  =  T2.staff_id WHERE T2.job_title_code  =  \"Department Manager\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the staff ids and genders for any staff with the title Department Manager.",
+    "gold_sql": "SELECT T1.staff_id ,  T1.staff_gender FROM staff AS T1 JOIN staff_department_assignments AS T2 ON T1.staff_id  =  T2.staff_id WHERE T2.job_title_code  =  \"Department Manager\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "For each payment method, return how many customers use it.",
+    "gold_sql": "SELECT payment_method_code ,  count(*) FROM customers GROUP BY payment_method_code",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "How many customers use each payment method?",
+    "gold_sql": "SELECT payment_method_code ,  count(*) FROM customers GROUP BY payment_method_code",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What is the id of the product that was ordered the most often?",
+    "gold_sql": "SELECT product_id FROM order_items GROUP BY product_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Give the product id for the product that was ordered most frequently.",
+    "gold_sql": "SELECT product_id FROM order_items GROUP BY product_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the name, phone number and email address of the customer who made the largest number of orders?",
+    "gold_sql": "SELECT T1.customer_name ,  T1.customer_phone ,  T1.customer_email FROM customers AS T1 JOIN customer_orders AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T2.customer_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the name, phone number and email address for the customer with the most orders.",
+    "gold_sql": "SELECT T1.customer_name ,  T1.customer_phone ,  T1.customer_email FROM customers AS T1 JOIN customer_orders AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T2.customer_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What is the average price for each type of product?",
+    "gold_sql": "SELECT product_type_code ,  avg(product_price) FROM products GROUP BY product_type_code",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the average price for each product type.",
+    "gold_sql": "SELECT product_type_code ,  avg(product_price) FROM products GROUP BY product_type_code",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "How many department stores does the store chain South have?",
+    "gold_sql": "SELECT count(*) FROM department_stores AS T1 JOIN department_store_chain AS T2 ON T1.dept_store_chain_id  =  T2.dept_store_chain_id WHERE T2.dept_store_chain_name  =  \"South\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Count the number of stores the chain South has.",
+    "gold_sql": "SELECT count(*) FROM department_stores AS T1 JOIN department_store_chain AS T2 ON T1.dept_store_chain_id  =  T2.dept_store_chain_id WHERE T2.dept_store_chain_name  =  \"South\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What is the name and job title of the staff who was assigned the latest?",
+    "gold_sql": "SELECT T1.staff_name ,  T2.job_title_code FROM staff AS T1 JOIN staff_department_assignments AS T2 ON T1.staff_id  =  T2.staff_id ORDER BY T2.date_assigned_to DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the name and job title of the staff with the latest date assigned.",
+    "gold_sql": "SELECT T1.staff_name ,  T2.job_title_code FROM staff AS T1 JOIN staff_department_assignments AS T2 ON T1.staff_id  =  T2.staff_id ORDER BY T2.date_assigned_to DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Give me the product type, name and price for all the products supplied by supplier id 3.",
+    "gold_sql": "SELECT T2.product_type_code ,  T2.product_name ,  T2.product_price FROM product_suppliers AS T1 JOIN products AS T2 ON T1.product_id  =  T2.product_id WHERE T1.supplier_id  =  3",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the product type, name, and price for products supplied by supplier 3.",
+    "gold_sql": "SELECT T2.product_type_code ,  T2.product_name ,  T2.product_price FROM product_suppliers AS T1 JOIN products AS T2 ON T1.product_id  =  T2.product_id WHERE T1.supplier_id  =  3",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the distinct name of customers whose order status is Pending, in the order of customer id.",
+    "gold_sql": "SELECT DISTINCT T1.customer_name FROM customers AS T1 JOIN customer_orders AS T2 ON T1.customer_id  =  T2.customer_id WHERE T2.order_status_code  =  \"Pending\" ORDER BY T2.customer_id",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the distinct names of customers with an order status of Pending, sorted by customer id?",
+    "gold_sql": "SELECT DISTINCT T1.customer_name FROM customers AS T1 JOIN customer_orders AS T2 ON T1.customer_id  =  T2.customer_id WHERE T2.order_status_code  =  \"Pending\" ORDER BY T2.customer_id",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Find the name and address of the customers who have both New and Pending orders.",
+    "gold_sql": "SELECT T1.customer_name ,  T1.customer_address FROM customers AS T1 JOIN customer_orders AS T2 ON T1.customer_id  =  T2.customer_id WHERE T2.order_status_code  =  \"New\" INTERSECT SELECT T1.customer_name ,  T1.customer_address FROM customers AS T1 JOIN customer_orders AS T2 ON T1.customer_id  =  T2.customer_id WHERE T2.order_status_code  =  \"Pending\"",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the names and addressed of customers who have both New and Pending orders?",
+    "gold_sql": "SELECT T1.customer_name ,  T1.customer_address FROM customers AS T1 JOIN customer_orders AS T2 ON T1.customer_id  =  T2.customer_id WHERE T2.order_status_code  =  \"New\" INTERSECT SELECT T1.customer_name ,  T1.customer_address FROM customers AS T1 JOIN customer_orders AS T2 ON T1.customer_id  =  T2.customer_id WHERE T2.order_status_code  =  \"Pending\"",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return ids of all the products that are supplied by supplier id 2 and are more expensive than the average price of all products.",
+    "gold_sql": "SELECT T1.product_id FROM product_suppliers AS T1 JOIN products AS T2 ON T1.product_id  =  T2.product_id WHERE T1.supplier_id  =  2 AND T2.product_price  >  (SELECT avg(product_price) FROM products)",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the ids of products from the supplier with id 2, which are more expensive than the average price across all products?",
+    "gold_sql": "SELECT T1.product_id FROM product_suppliers AS T1 JOIN products AS T2 ON T1.product_id  =  T2.product_id WHERE T1.supplier_id  =  2 AND T2.product_price  >  (SELECT avg(product_price) FROM products)",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What is the id and name of the department store that has both marketing and managing department?",
+    "gold_sql": "SELECT T2.dept_store_id ,  T2.store_name FROM departments AS T1 JOIN department_stores AS T2 ON T1.dept_store_id  =  T2.dept_store_id WHERE T1.department_name  =  \"marketing\" INTERSECT SELECT T2.dept_store_id ,  T2.store_name FROM departments AS T1 JOIN department_stores AS T2 ON T1.dept_store_id  =  T2.dept_store_id WHERE T1.department_name  =  \"managing\"",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the ids and names of department stores with both marketing and managing departments?",
+    "gold_sql": "SELECT T2.dept_store_id ,  T2.store_name FROM departments AS T1 JOIN department_stores AS T2 ON T1.dept_store_id  =  T2.dept_store_id WHERE T1.department_name  =  \"marketing\" INTERSECT SELECT T2.dept_store_id ,  T2.store_name FROM departments AS T1 JOIN department_stores AS T2 ON T1.dept_store_id  =  T2.dept_store_id WHERE T1.department_name  =  \"managing\"",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the ids of the two department store chains with the largest number of department stores?",
+    "gold_sql": "SELECT dept_store_chain_id FROM department_stores GROUP BY dept_store_chain_id ORDER BY count(*) DESC LIMIT 2",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the ids of the two department store chains with the most department stores.",
+    "gold_sql": "SELECT dept_store_chain_id FROM department_stores GROUP BY dept_store_chain_id ORDER BY count(*) DESC LIMIT 2",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What is the id of the department with the least number of staff?",
+    "gold_sql": "SELECT department_id FROM staff_department_assignments GROUP BY department_id ORDER BY count(*) LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the id of the department with the fewest staff assignments.",
+    "gold_sql": "SELECT department_id FROM staff_department_assignments GROUP BY department_id ORDER BY count(*) LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "For each product type, return the maximum and minimum price.",
+    "gold_sql": "SELECT product_type_code ,  max(product_price) ,  min(product_price) FROM products GROUP BY product_type_code",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the maximum and minimum product prices for each product type?",
+    "gold_sql": "SELECT product_type_code ,  max(product_price) ,  min(product_price) FROM products GROUP BY product_type_code",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Find the product type whose average price is higher than the average price of all products.",
+    "gold_sql": "SELECT product_type_code FROM products GROUP BY product_type_code HAVING avg(product_price)  >  (SELECT avg(product_price) FROM products)",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What is the code of the product type with an average price higher than the average price of all products?",
+    "gold_sql": "SELECT product_type_code FROM products GROUP BY product_type_code HAVING avg(product_price)  >  (SELECT avg(product_price) FROM products)",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Find the id and name of the staff who has been assigned for the shortest period.",
+    "gold_sql": "SELECT T1.staff_id ,  T1.staff_name FROM staff AS T1 JOIN Staff_Department_Assignments AS T2 ON T1.staff_id  =  T2.staff_id ORDER BY date_assigned_to - date_assigned_from LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What is the id and name of the staff who has been assigned for the least amount of time?",
+    "gold_sql": "SELECT T1.staff_id ,  T1.staff_name FROM staff AS T1 JOIN Staff_Department_Assignments AS T2 ON T1.staff_id  =  T2.staff_id ORDER BY date_assigned_to - date_assigned_from LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the names and ids of all products whose price is between 600 and 700.",
+    "gold_sql": "SELECT product_name ,  product_id FROM products WHERE product_price BETWEEN 600 AND 700",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the names and ids of products costing between 600 and 700?",
+    "gold_sql": "SELECT product_name ,  product_id FROM products WHERE product_price BETWEEN 600 AND 700",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Find the ids of all distinct customers who made order after some orders that were Cancelled.",
+    "gold_sql": "SELECT DISTINCT customer_id FROM Customer_Orders WHERE order_date  >  (SELECT min(order_date) FROM Customer_Orders WHERE order_status_code  =  \"Cancelled\")",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the distinct ids of customers who made an order after any order that was Cancelled?",
+    "gold_sql": "SELECT DISTINCT customer_id FROM Customer_Orders WHERE order_date  >  (SELECT min(order_date) FROM Customer_Orders WHERE order_status_code  =  \"Cancelled\")",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What is id of the staff who had a Staff Department Assignment earlier than any Clerical Staff?",
+    "gold_sql": "SELECT staff_id FROM Staff_Department_Assignments WHERE date_assigned_to  <  (SELECT max(date_assigned_to) FROM Staff_Department_Assignments WHERE job_title_code  =  'Clerical Staff')",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the id of the staff whose Staff Department Assignment was earlier than that of any Clerical Staff.",
+    "gold_sql": "SELECT staff_id FROM Staff_Department_Assignments WHERE date_assigned_to  <  (SELECT max(date_assigned_to) FROM Staff_Department_Assignments WHERE job_title_code  =  'Clerical Staff')",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the names and ids of customers whose address contains TN?",
+    "gold_sql": "SELECT customer_name ,  customer_id FROM customers WHERE customer_address LIKE \"%TN%\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the names and ids of customers who have TN in their address.",
+    "gold_sql": "SELECT customer_name ,  customer_id FROM customers WHERE customer_address LIKE \"%TN%\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the name and gender of the staff who was assigned in 2016.",
+    "gold_sql": "SELECT T1.staff_name ,  T1.staff_gender FROM staff AS T1 JOIN staff_department_assignments AS T2 ON T1.staff_id  =  T2.staff_id WHERE T2.date_assigned_from LIKE \"2016%\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the names and genders of staff who were assigned in 2016?",
+    "gold_sql": "SELECT T1.staff_name ,  T1.staff_gender FROM staff AS T1 JOIN staff_department_assignments AS T2 ON T1.staff_id  =  T2.staff_id WHERE T2.date_assigned_from LIKE \"2016%\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "List the name of staff who has been assigned multiple jobs.",
+    "gold_sql": "SELECT T1.staff_name FROM staff AS T1 JOIN staff_department_assignments AS T2 ON T1.staff_id  =  T2.staff_id GROUP BY T2.staff_id HAVING COUNT (*)  >  1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the names of staff who have been assigned multiple jobs?",
+    "gold_sql": "SELECT T1.staff_name FROM staff AS T1 JOIN staff_department_assignments AS T2 ON T1.staff_id  =  T2.staff_id GROUP BY T2.staff_id HAVING COUNT (*)  >  1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "List the name and phone number of all suppliers in the alphabetical order of their addresses.",
+    "gold_sql": "SELECT T1.supplier_name ,  T1.supplier_phone FROM Suppliers AS T1 JOIN supplier_addresses AS T2 ON T1.supplier_id  =  T2.supplier_id JOIN addresses AS T3 ON T2.address_id  =  T3.address_id ORDER BY T3.address_details",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the names and phone numbers for all suppliers, sorted in alphabetical order of their addressed?",
+    "gold_sql": "SELECT T1.supplier_name ,  T1.supplier_phone FROM Suppliers AS T1 JOIN supplier_addresses AS T2 ON T1.supplier_id  =  T2.supplier_id JOIN addresses AS T3 ON T2.address_id  =  T3.address_id ORDER BY T3.address_details",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the phone numbers of all customers and suppliers.",
+    "gold_sql": "SELECT customer_phone FROM customers UNION SELECT supplier_phone FROM suppliers",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the phone numbers for all customers and suppliers.",
+    "gold_sql": "SELECT customer_phone FROM customers UNION SELECT supplier_phone FROM suppliers",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the ids of all products that were ordered more than three times or supplied more than 80000.",
+    "gold_sql": "SELECT product_id FROM Order_Items GROUP BY product_id HAVING count(*)  >  3 UNION SELECT product_id FROM Product_Suppliers GROUP BY product_id HAVING sum(total_amount_purchased)  >  80000",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the ids of all products that were either ordered more than 3 times or have a cumulative amount purchased of above 80000?",
+    "gold_sql": "SELECT product_id FROM Order_Items GROUP BY product_id HAVING count(*)  >  3 UNION SELECT product_id FROM Product_Suppliers GROUP BY product_id HAVING sum(total_amount_purchased)  >  80000",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are id and name of the products whose price is lower than 600 or higher than 900?",
+    "gold_sql": "SELECT product_id ,  product_name FROM products WHERE product_price  <  600 OR product_price  >  900",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Give the ids and names of products with price lower than 600 or higher than 900.",
+    "gold_sql": "SELECT product_id ,  product_name FROM products WHERE product_price  <  600 OR product_price  >  900",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Find the id of suppliers whose average amount purchased for each product is above 50000 or below 30000.",
+    "gold_sql": "SELECT supplier_id FROM Product_Suppliers GROUP BY supplier_id HAVING avg(total_amount_purchased)  >  50000 OR avg(total_amount_purchased)  <  30000",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the ids of suppliers which have an average amount purchased of above 50000 or below 30000?",
+    "gold_sql": "SELECT supplier_id FROM Product_Suppliers GROUP BY supplier_id HAVING avg(total_amount_purchased)  >  50000 OR avg(total_amount_purchased)  <  30000",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the average amount purchased and value purchased for the supplier who supplies the most products.",
+    "gold_sql": "SELECT avg(total_amount_purchased) ,  avg(total_value_purchased) FROM Product_Suppliers WHERE supplier_id  =  (SELECT supplier_id FROM Product_Suppliers GROUP BY supplier_id ORDER BY count(*) DESC LIMIT 1)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the average total amount purchased and total value purchased for the supplier who supplies the greatest number of products.",
+    "gold_sql": "SELECT avg(total_amount_purchased) ,  avg(total_value_purchased) FROM Product_Suppliers WHERE supplier_id  =  (SELECT supplier_id FROM Product_Suppliers GROUP BY supplier_id ORDER BY count(*) DESC LIMIT 1)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What is the largest and smallest customer codes?",
+    "gold_sql": "SELECT max(customer_code) ,  min(customer_code) FROM Customers",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Return the maximum and minimum customer codes.",
+    "gold_sql": "SELECT max(customer_code) ,  min(customer_code) FROM Customers",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "List the names of all the distinct customers who bought a keyboard.",
+    "gold_sql": "SELECT DISTINCT T1.customer_name FROM customers AS T1 JOIN customer_orders AS T2 ON T1.customer_id  =  T2.customer_id JOIN order_items AS T3 ON T2.order_id  =  T3.order_id JOIN products AS T4 ON T3.product_id  =  T4.product_id WHERE T4.product_name  =  \"keyboard\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the distinct names of customers who have purchased a keyboard?",
+    "gold_sql": "SELECT DISTINCT T1.customer_name FROM customers AS T1 JOIN customer_orders AS T2 ON T1.customer_id  =  T2.customer_id JOIN order_items AS T3 ON T2.order_id  =  T3.order_id JOIN products AS T4 ON T3.product_id  =  T4.product_id WHERE T4.product_name  =  \"keyboard\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "List the names and phone numbers of all the distinct suppliers who supply red jeans.",
+    "gold_sql": "SELECT DISTINCT T1.supplier_name ,  T1.supplier_phone FROM suppliers AS T1 JOIN product_suppliers AS T2 ON T1.supplier_id  =  T2.supplier_id JOIN products AS T3 ON T2.product_id  =  T3.product_id WHERE T3.product_name  =  \"red jeans\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the distinct names and phone numbers for suppliers who have red jeans?",
+    "gold_sql": "SELECT DISTINCT T1.supplier_name ,  T1.supplier_phone FROM suppliers AS T1 JOIN product_suppliers AS T2 ON T1.supplier_id  =  T2.supplier_id JOIN products AS T3 ON T2.product_id  =  T3.product_id WHERE T3.product_name  =  \"red jeans\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the highest and lowest prices of products, grouped by and alphabetically ordered by product type?",
+    "gold_sql": "SELECT max(product_price) ,  min(product_price) ,  product_type_code FROM products GROUP BY product_type_code ORDER BY product_type_code",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Give the maximum and minimum product prices for each product type, grouped and ordered by product type.",
+    "gold_sql": "SELECT max(product_price) ,  min(product_price) ,  product_type_code FROM products GROUP BY product_type_code ORDER BY product_type_code",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "List the order id, customer id for orders in Cancelled status, ordered by their order dates.",
+    "gold_sql": "SELECT order_id ,  customer_id FROM customer_orders WHERE order_status_code  =   \"Cancelled\" ORDER BY order_date",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the order ids and customer ids for orders that have been Cancelled, sorted by their order dates?",
+    "gold_sql": "SELECT order_id ,  customer_id FROM customer_orders WHERE order_status_code  =   \"Cancelled\" ORDER BY order_date",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Find the names of products that were bought by at least two distinct customers.",
+    "gold_sql": "SELECT DISTINCT T3.product_name FROM customer_orders AS T1 JOIN order_items AS T2 ON T1.order_id  =  T2.order_id JOIN products AS T3 ON T2.product_id  =  T3.product_id GROUP BY T3.product_id HAVING COUNT (DISTINCT T1.customer_id)  >=  2",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the distinct names of products purchased by at least two different customers?",
+    "gold_sql": "SELECT DISTINCT T3.product_name FROM customer_orders AS T1 JOIN order_items AS T2 ON T1.order_id  =  T2.order_id JOIN products AS T3 ON T2.product_id  =  T3.product_id GROUP BY T3.product_id HAVING COUNT (DISTINCT T1.customer_id)  >=  2",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Find the names of customers who have bought by at least three distinct products.",
+    "gold_sql": "SELECT DISTINCT T1.customer_name FROM customers AS T1 JOIN customer_orders AS T2 ON T1.customer_id  =  T2.customer_id JOIN order_items AS T3 ON T2.order_id  =  T3.order_id GROUP BY T1.customer_id HAVING COUNT (DISTINCT T3.product_id)  >=  3",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the distinct names of customers who have purchased at least three different products?",
+    "gold_sql": "SELECT DISTINCT T1.customer_name FROM customers AS T1 JOIN customer_orders AS T2 ON T1.customer_id  =  T2.customer_id JOIN order_items AS T3 ON T2.order_id  =  T3.order_id GROUP BY T1.customer_id HAVING COUNT (DISTINCT T3.product_id)  >=  3",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Find the name and gender of the staff who has been assigned the job of Sales Person but never Clerical Staff.",
+    "gold_sql": "SELECT T1.staff_name ,  T1.staff_gender FROM staff AS T1 JOIN Staff_Department_Assignments AS T2 ON T1.staff_id  =  T2.staff_id WHERE T2.job_title_code  =  \"Sales Person\" EXCEPT SELECT T1.staff_name ,  T1.staff_gender FROM staff AS T1 JOIN Staff_Department_Assignments AS T2 ON T1.staff_id  =  T2.staff_id WHERE T2.job_title_code  =  \"Clerical Staff\"",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the names and genders of staff who have held the title Sales Person, but never Clerical Staff?",
+    "gold_sql": "SELECT T1.staff_name ,  T1.staff_gender FROM staff AS T1 JOIN Staff_Department_Assignments AS T2 ON T1.staff_id  =  T2.staff_id WHERE T2.job_title_code  =  \"Sales Person\" EXCEPT SELECT T1.staff_name ,  T1.staff_gender FROM staff AS T1 JOIN Staff_Department_Assignments AS T2 ON T1.staff_id  =  T2.staff_id WHERE T2.job_title_code  =  \"Clerical Staff\"",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Find the id and name of customers whose address contains WY state and do not use credit card for payment.",
+    "gold_sql": "SELECT customer_id ,  customer_name FROM customers WHERE customer_address LIKE \"%WY%\" AND payment_method_code != \"Credit Card\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What are the ids and names of customers with addressed that contain WY and who do not use a credit card for payment?",
+    "gold_sql": "SELECT customer_id ,  customer_name FROM customers WHERE customer_address LIKE \"%WY%\" AND payment_method_code != \"Credit Card\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Find the average price of all product clothes.",
+    "gold_sql": "SELECT avg(product_price) FROM products WHERE product_type_code  =  'Clothes'",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What is the average price of clothes?",
+    "gold_sql": "SELECT avg(product_price) FROM products WHERE product_type_code  =  'Clothes'",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "department_store",
+    "question": "Find the name of the most expensive hardware product.",
+    "gold_sql": "SELECT product_name FROM products WHERE product_type_code  =  'Hardware' ORDER BY product_price DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "department_store",
+    "question": "What is the name of the hardware product with the greatest price?",
+    "gold_sql": "SELECT product_name FROM products WHERE product_type_code  =  'Hardware' ORDER BY product_price DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Find all the distinct district names ordered by city area in descending.",
+    "gold_sql": "SELECT DISTINCT District_name FROM district ORDER BY city_area DESC",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What are the different district names in order of descending city area?",
+    "gold_sql": "SELECT DISTINCT District_name FROM district ORDER BY city_area DESC",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Find the list of page size which have more than 3 product listed",
+    "gold_sql": "SELECT max_page_size FROM product GROUP BY max_page_size HAVING count(*)  >  3",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What is the maximum page size for everything that has more than 3 products listed?",
+    "gold_sql": "SELECT max_page_size FROM product GROUP BY max_page_size HAVING count(*)  >  3",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Find the name and population of district with population between 200000 and 2000000",
+    "gold_sql": "SELECT District_name ,  City_Population FROM district WHERE City_Population BETWEEN 200000 AND 2000000",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What are the district names and city populations for all districts that between 200,000 and 2,000,000 residents?",
+    "gold_sql": "SELECT District_name ,  City_Population FROM district WHERE City_Population BETWEEN 200000 AND 2000000",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Find the name all districts with city area greater than 10 or population larger than 100000",
+    "gold_sql": "SELECT district_name FROM district WHERE city_area  >  10 OR City_Population  >  100000",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What are the names of all districts with a city area greater than 10 or have more than 100000 people living there?",
+    "gold_sql": "SELECT district_name FROM district WHERE city_area  >  10 OR City_Population  >  100000",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Which district has the largest population?",
+    "gold_sql": "SELECT district_name FROM district ORDER BY city_population DESC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What is the name of the district with the most residents?",
+    "gold_sql": "SELECT district_name FROM district ORDER BY city_population DESC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Which district has the least area?",
+    "gold_sql": "SELECT district_name FROM district ORDER BY city_area ASC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What is the name of the district with the smallest area?",
+    "gold_sql": "SELECT district_name FROM district ORDER BY city_area ASC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Find the total population of the top 3 districts with the largest area.",
+    "gold_sql": "SELECT sum(city_population) FROM district ORDER BY city_area DESC LIMIT 3",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What is the total number of residents for the districts with the 3 largest areas?",
+    "gold_sql": "SELECT sum(city_population) FROM district ORDER BY city_area DESC LIMIT 3",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Find all types of store and number of them.",
+    "gold_sql": "SELECT TYPE ,  count(*) FROM store GROUP BY TYPE",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "store_product",
+    "question": "For each type of store, how many of them are there?",
+    "gold_sql": "SELECT TYPE ,  count(*) FROM store GROUP BY TYPE",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Find the names of all stores in Khanewal District.",
+    "gold_sql": "SELECT t1.store_name FROM store AS t1 JOIN store_district AS t2 ON t1.store_id  =  t2.store_id JOIN district AS t3 ON t2.district_id  =  t3.district_id WHERE t3.district_name  =  \"Khanewal District\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What are the names of all the stores located in Khanewal District?",
+    "gold_sql": "SELECT t1.store_name FROM store AS t1 JOIN store_district AS t2 ON t1.store_id  =  t2.store_id JOIN district AS t3 ON t2.district_id  =  t3.district_id WHERE t3.district_name  =  \"Khanewal District\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Which city is the headquarter of the store named \"Blackville\" in?",
+    "gold_sql": "SELECT t3.headquartered_city FROM store AS t1 JOIN store_district AS t2 ON t1.store_id  =  t2.store_id JOIN district AS t3 ON t2.district_id  =  t3.district_id WHERE t1.store_name  =  \"Blackville\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What city is the headquarter of the store Blackville?",
+    "gold_sql": "SELECT t3.headquartered_city FROM store AS t1 JOIN store_district AS t2 ON t1.store_id  =  t2.store_id JOIN district AS t3 ON t2.district_id  =  t3.district_id WHERE t1.store_name  =  \"Blackville\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Find the number of stores in each city.",
+    "gold_sql": "SELECT t3.headquartered_city ,  count(*) FROM store AS t1 JOIN store_district AS t2 ON t1.store_id  =  t2.store_id JOIN district AS t3 ON t2.district_id  =  t3.district_id GROUP BY t3.headquartered_city",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "How many stores are headquarted in each city?",
+    "gold_sql": "SELECT t3.headquartered_city ,  count(*) FROM store AS t1 JOIN store_district AS t2 ON t1.store_id  =  t2.store_id JOIN district AS t3 ON t2.district_id  =  t3.district_id GROUP BY t3.headquartered_city",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Find the city with the most number of stores.",
+    "gold_sql": "SELECT t3.headquartered_city FROM store AS t1 JOIN store_district AS t2 ON t1.store_id  =  t2.store_id JOIN district AS t3 ON t2.district_id  =  t3.district_id GROUP BY t3.headquartered_city ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What is the city with the most number of flagship stores?",
+    "gold_sql": "SELECT t3.headquartered_city FROM store AS t1 JOIN store_district AS t2 ON t1.store_id  =  t2.store_id JOIN district AS t3 ON t2.district_id  =  t3.district_id GROUP BY t3.headquartered_city ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What is the average pages per minute color?",
+    "gold_sql": "SELECT avg(pages_per_minute_color) FROM product",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What is the average number of pages per minute color?",
+    "gold_sql": "SELECT avg(pages_per_minute_color) FROM product",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What products are available at store named \"Miramichi\"?",
+    "gold_sql": "SELECT t1.product FROM product AS t1 JOIN store_product AS t2 ON t1.product_id  =  t2.product_id JOIN store AS t3 ON t2.store_id  =  t3.store_id WHERE t3.store_name  =  \"Miramichi\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What products are sold at the store named Miramichi?",
+    "gold_sql": "SELECT t1.product FROM product AS t1 JOIN store_product AS t2 ON t1.product_id  =  t2.product_id JOIN store AS t3 ON t2.store_id  =  t3.store_id WHERE t3.store_name  =  \"Miramichi\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Find products with max page size as \"A4\" and pages per minute color smaller than 5.",
+    "gold_sql": "SELECT product FROM product WHERE max_page_size  =  \"A4\" AND pages_per_minute_color  <  5",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What are the products with the maximum page size A4 that also have a pages per minute color smaller than 5?",
+    "gold_sql": "SELECT product FROM product WHERE max_page_size  =  \"A4\" AND pages_per_minute_color  <  5",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Find products with max page size as \"A4\" or pages per minute color smaller than 5.",
+    "gold_sql": "SELECT product FROM product WHERE max_page_size  =  \"A4\" OR pages_per_minute_color  <  5",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What are the products with the maximum page size eqal to A4 or a pages per minute color less than 5?",
+    "gold_sql": "SELECT product FROM product WHERE max_page_size  =  \"A4\" OR pages_per_minute_color  <  5",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Find all the product whose name contains the word \"Scanner\".",
+    "gold_sql": "SELECT product FROM product WHERE product LIKE \"%Scanner%\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What are all of the products whose name includes the substring \"Scanner\"?",
+    "gold_sql": "SELECT product FROM product WHERE product LIKE \"%Scanner%\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Find the most prominent max page size among all the products.",
+    "gold_sql": "SELECT max_page_size FROM product GROUP BY max_page_size ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What is the most common maximum page size?",
+    "gold_sql": "SELECT max_page_size FROM product GROUP BY max_page_size ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Find the name of the products that are not using the most frequently-used max page size.",
+    "gold_sql": "SELECT product FROM product WHERE product != (SELECT max_page_size FROM product GROUP BY max_page_size ORDER BY count(*) DESC LIMIT 1)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What are the names of all products that are not the most frequently-used maximum page size?",
+    "gold_sql": "SELECT product FROM product WHERE product != (SELECT max_page_size FROM product GROUP BY max_page_size ORDER BY count(*) DESC LIMIT 1)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Find the total population of the districts where the area is bigger than the average city area.",
+    "gold_sql": "SELECT sum(city_population) FROM district WHERE city_area  >  (SELECT avg(city_area) FROM district)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What is the total population for all the districts that have an area larger tahn the average city area?",
+    "gold_sql": "SELECT sum(city_population) FROM district WHERE city_area  >  (SELECT avg(city_area) FROM district)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "store_product",
+    "question": "Find the names of districts where have both city mall and village store type stores.",
+    "gold_sql": "SELECT t3.District_name FROM store AS t1 JOIN store_district AS t2 ON t1.store_id  =  t2.store_id JOIN district AS t3 ON t2.district_id  =  t3.district_id WHERE t1.Type  =  \"City Mall\" INTERSECT SELECT t3.District_name FROM store AS t1 JOIN store_district AS t2 ON t1.store_id  =  t2.store_id JOIN district AS t3 ON t2.district_id  =  t3.district_id WHERE t1.Type  =  \"Village Store\"",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "store_product",
+    "question": "What are the names of the districts that have both mall and village store style shops?",
+    "gold_sql": "SELECT t3.District_name FROM store AS t1 JOIN store_district AS t2 ON t1.store_id  =  t2.store_id JOIN district AS t3 ON t2.district_id  =  t3.district_id WHERE t1.Type  =  \"City Mall\" INTERSECT SELECT t3.District_name FROM store AS t1 JOIN store_district AS t2 ON t1.store_id  =  t2.store_id JOIN district AS t3 ON t2.district_id  =  t3.district_id WHERE t1.Type  =  \"Village Store\"",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the name of all customers.",
+    "gold_sql": "SELECT customer_name FROM customers",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What are the names of all the customers?",
+    "gold_sql": "SELECT customer_name FROM customers",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "How many customers are there?",
+    "gold_sql": "SELECT count(*) FROM customers",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Return the total number of distinct customers.",
+    "gold_sql": "SELECT count(*) FROM customers",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What is the average amount of items ordered in each order?",
+    "gold_sql": "SELECT avg(order_quantity) FROM order_items",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the average order quantity per order.",
+    "gold_sql": "SELECT avg(order_quantity) FROM order_items",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What are the names of customers who use payment method \"Cash\"?",
+    "gold_sql": "SELECT customer_name FROM customers WHERE payment_method  =  \"Cash\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Which customers use \"Cash\" for payment method? Return the customer names.",
+    "gold_sql": "SELECT customer_name FROM customers WHERE payment_method  =  \"Cash\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the \"date became customers\" of the customers whose ID is between 10 and 20.",
+    "gold_sql": "SELECT date_became_customer FROM customers WHERE customer_id BETWEEN 10 AND 20",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What are the dates when customers with ids between 10 and 20 became customers?",
+    "gold_sql": "SELECT date_became_customer FROM customers WHERE customer_id BETWEEN 10 AND 20",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Which payment method is used by most customers?",
+    "gold_sql": "SELECT payment_method FROM customers GROUP BY payment_method ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the payment method that is used most frequently.",
+    "gold_sql": "SELECT payment_method FROM customers GROUP BY payment_method ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What are the names of customers using the most popular payment method?",
+    "gold_sql": "SELECT customer_name FROM customers WHERE payment_method  =  (SELECT payment_method FROM customers GROUP BY payment_method ORDER BY count(*) DESC LIMIT 1)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the name of the customers who use the most frequently used payment method.",
+    "gold_sql": "SELECT customer_name FROM customers WHERE payment_method  =  (SELECT payment_method FROM customers GROUP BY payment_method ORDER BY count(*) DESC LIMIT 1)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What are all the payment methods?",
+    "gold_sql": "SELECT DISTINCT payment_method FROM customers",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Return all the distinct payment methods used by customers.",
+    "gold_sql": "SELECT DISTINCT payment_method FROM customers",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What are the details of all products?",
+    "gold_sql": "SELECT DISTINCT product_details FROM products",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Return the the details of all products.",
+    "gold_sql": "SELECT DISTINCT product_details FROM products",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the name of all customers whose name contains \"Alex\".",
+    "gold_sql": "SELECT customer_name FROM customers WHERE customer_name LIKE \"%Alex%\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Which customer's name contains \"Alex\"? Find the full name.",
+    "gold_sql": "SELECT customer_name FROM customers WHERE customer_name LIKE \"%Alex%\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the detail of products whose detail contains the word \"Latte\" or the word \"Americano\"",
+    "gold_sql": "SELECT product_details FROM products WHERE product_details LIKE \"%Latte%\" OR product_details LIKE \"%Americano%\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Which product's detail contains the word \"Latte\" or \"Americano\"? Return the full detail.",
+    "gold_sql": "SELECT product_details FROM products WHERE product_details LIKE \"%Latte%\" OR product_details LIKE \"%Americano%\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What is the address content of the customer named \"Maudie Kertzmann\"?",
+    "gold_sql": "SELECT t3.address_content FROM customers AS t1 JOIN customer_addresses AS t2 ON t1.customer_id  =  t2.customer_id JOIN addresses AS t3 ON t2.address_id  =  t3.address_id WHERE t1.customer_name  =  \"Maudie Kertzmann\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Return the address content for the customer whose name is \"Maudie Kertzmann\".",
+    "gold_sql": "SELECT t3.address_content FROM customers AS t1 JOIN customer_addresses AS t2 ON t1.customer_id  =  t2.customer_id JOIN addresses AS t3 ON t2.address_id  =  t3.address_id WHERE t1.customer_name  =  \"Maudie Kertzmann\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "How many customers are living in city \"Lake Geovannyton\"?",
+    "gold_sql": "SELECT count(*) FROM customers AS t1 JOIN customer_addresses AS t2 ON t1.customer_id  =  t2.customer_id JOIN addresses AS t3 ON t2.address_id  =  t3.address_id WHERE t3.city  =  \"Lake Geovannyton\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the number of customers who live in the city called Lake Geovannyton.",
+    "gold_sql": "SELECT count(*) FROM customers AS t1 JOIN customer_addresses AS t2 ON t1.customer_id  =  t2.customer_id JOIN addresses AS t3 ON t2.address_id  =  t3.address_id WHERE t3.city  =  \"Lake Geovannyton\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the name of customers who are living in Colorado?",
+    "gold_sql": "SELECT t1.customer_name FROM customers AS t1 JOIN customer_addresses AS t2 ON t1.customer_id  =  t2.customer_id JOIN addresses AS t3 ON t2.address_id  =  t3.address_id WHERE t3.state_province_county  =  \"Colorado\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What are the names of customers who live in Colorado state?",
+    "gold_sql": "SELECT t1.customer_name FROM customers AS t1 JOIN customer_addresses AS t2 ON t1.customer_id  =  t2.customer_id JOIN addresses AS t3 ON t2.address_id  =  t3.address_id WHERE t3.state_province_county  =  \"Colorado\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the list of cities that no customer is living in.",
+    "gold_sql": "SELECT city FROM addresses WHERE city NOT IN ( SELECT DISTINCT t3.city FROM customers AS t1 JOIN customer_addresses AS t2 ON t1.customer_id  =  t2.customer_id JOIN addresses AS t3 ON t2.address_id  =  t3.address_id)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What are the cities no customers live in?",
+    "gold_sql": "SELECT city FROM addresses WHERE city NOT IN ( SELECT DISTINCT t3.city FROM customers AS t1 JOIN customer_addresses AS t2 ON t1.customer_id  =  t2.customer_id JOIN addresses AS t3 ON t2.address_id  =  t3.address_id)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Which city has the most customers living in?",
+    "gold_sql": "SELECT t3.city FROM customers AS t1 JOIN customer_addresses AS t2 ON t1.customer_id  =  t2.customer_id JOIN addresses AS t3 ON t2.address_id  =  t3.address_id GROUP BY t3.city ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the city where the most customers live.",
+    "gold_sql": "SELECT t3.city FROM customers AS t1 JOIN customer_addresses AS t2 ON t1.customer_id  =  t2.customer_id JOIN addresses AS t3 ON t2.address_id  =  t3.address_id GROUP BY t3.city ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Retrieve the list of all cities.",
+    "gold_sql": "SELECT DISTINCT city FROM addresses",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "List all the distinct cities",
+    "gold_sql": "SELECT DISTINCT city FROM addresses",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the city with post code 255.",
+    "gold_sql": "SELECT city FROM addresses WHERE zip_postcode  =  255",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Which city is post code 255 located in?",
+    "gold_sql": "SELECT city FROM addresses WHERE zip_postcode  =  255",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the state and country of all cities with post code starting with 4.",
+    "gold_sql": "SELECT state_province_county ,  country FROM addresses WHERE zip_postcode LIKE \"4%\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What are the state and country of all the cities that have post codes starting with 4.\\",
+    "gold_sql": "SELECT state_province_county ,  country FROM addresses WHERE zip_postcode LIKE \"4%\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "List the countries having more than 4 addresses listed.",
+    "gold_sql": "SELECT country FROM addresses GROUP BY country HAVING count(address_id)  >  4",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "For which countries are there more than four distinct addresses listed?",
+    "gold_sql": "SELECT country FROM addresses GROUP BY country HAVING count(address_id)  >  4",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "List all the contact channel codes that were used less than 5 times.",
+    "gold_sql": "SELECT channel_code FROM customer_contact_channels GROUP BY channel_code HAVING count(customer_id)  <  5",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Which contact channel codes were used less than 5 times?",
+    "gold_sql": "SELECT channel_code FROM customer_contact_channels GROUP BY channel_code HAVING count(customer_id)  <  5",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Which contact channel has been used by the customer with name \"Tillman Ernser\"?",
+    "gold_sql": "SELECT DISTINCT channel_code FROM customers AS t1 JOIN customer_contact_channels AS t2 ON t1.customer_id  =  t2.customer_id WHERE t1.customer_name  =  \"Tillman Ernser\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the contact channel code that was used by the customer named \"Tillman Ernser\".",
+    "gold_sql": "SELECT DISTINCT channel_code FROM customers AS t1 JOIN customer_contact_channels AS t2 ON t1.customer_id  =  t2.customer_id WHERE t1.customer_name  =  \"Tillman Ernser\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What is the \"active to date\" of the latest contact channel used by \"Tillman Ernser\"?",
+    "gold_sql": "SELECT max(t2.active_to_date) FROM customers AS t1 JOIN customer_contact_channels AS t2 ON t1.customer_id  =  t2.customer_id WHERE t1.customer_name  =  \"Tillman Ernser\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Return the the \"active to date\" of the latest contact channel used by the customer named \"Tillman Ernser\".",
+    "gold_sql": "SELECT max(t2.active_to_date) FROM customers AS t1 JOIN customer_contact_channels AS t2 ON t1.customer_id  =  t2.customer_id WHERE t1.customer_name  =  \"Tillman Ernser\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What is the average time span of contact channels in the database?",
+    "gold_sql": "SELECT avg(active_to_date - active_from_date) FROM customer_contact_channels",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Compute the average active time span of contact channels.",
+    "gold_sql": "SELECT avg(active_to_date - active_from_date) FROM customer_contact_channels",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What is the channel code and contact number of the customer contact channel that was active for the longest time?",
+    "gold_sql": "SELECT channel_code ,  contact_number FROM customer_contact_channels WHERE active_to_date - active_from_date  =  (SELECT active_to_date - active_from_date FROM customer_contact_channels ORDER BY (active_to_date - active_from_date) DESC LIMIT 1)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Return the channel code and contact number of the customer contact channel whose active duration was the longest.",
+    "gold_sql": "SELECT channel_code ,  contact_number FROM customer_contact_channels WHERE active_to_date - active_from_date  =  (SELECT active_to_date - active_from_date FROM customer_contact_channels ORDER BY (active_to_date - active_from_date) DESC LIMIT 1)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the name and active date of the customer that use email as the contact channel.",
+    "gold_sql": "SELECT t1.customer_name ,  t2.active_from_date FROM customers AS t1 JOIN customer_contact_channels AS t2 ON t1.customer_id  =  t2.customer_id WHERE t2.channel_code  =  'Email'",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What are the name and active date of the customers whose contact channel code is email?",
+    "gold_sql": "SELECT t1.customer_name ,  t2.active_from_date FROM customers AS t1 JOIN customer_contact_channels AS t2 ON t1.customer_id  =  t2.customer_id WHERE t2.channel_code  =  'Email'",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What is the name of the customer that made the order with the largest quantity?",
+    "gold_sql": "SELECT t1.customer_name FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id JOIN order_items AS t3 ON t2.order_id  =  t3.order_id WHERE t3.order_quantity  =  ( SELECT max(order_quantity) FROM order_items)",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the name of the customer who made the order of the largest amount of goods.",
+    "gold_sql": "SELECT t1.customer_name FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id JOIN order_items AS t3 ON t2.order_id  =  t3.order_id WHERE t3.order_quantity  =  ( SELECT max(order_quantity) FROM order_items)",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What is the name of the customer that has purchased the most items?",
+    "gold_sql": "SELECT t1.customer_name FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id JOIN order_items AS t3 ON t2.order_id  =  t3.order_id GROUP BY t1.customer_name ORDER BY sum(t3.order_quantity) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Give me the name of the customer who ordered the most items in total.",
+    "gold_sql": "SELECT t1.customer_name FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id JOIN order_items AS t3 ON t2.order_id  =  t3.order_id GROUP BY t1.customer_name ORDER BY sum(t3.order_quantity) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What is the payment method of the customer that has purchased the least quantity of items?",
+    "gold_sql": "SELECT t1.payment_method FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id JOIN order_items AS t3 ON t2.order_id  =  t3.order_id GROUP BY t1.customer_name ORDER BY sum(t3.order_quantity) LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Tell me the payment method used by the customer who ordered the least amount of goods in total.",
+    "gold_sql": "SELECT t1.payment_method FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id JOIN order_items AS t3 ON t2.order_id  =  t3.order_id GROUP BY t1.customer_name ORDER BY sum(t3.order_quantity) LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "How many types of products have Rodrick Heaney bought in total?",
+    "gold_sql": "SELECT count(DISTINCT t3.product_id) FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id JOIN order_items AS t3 ON t2.order_id  =  t3.order_id WHERE t1.customer_name  =  \"Rodrick Heaney\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the number of distinct products Rodrick Heaney has bought so far.",
+    "gold_sql": "SELECT count(DISTINCT t3.product_id) FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id JOIN order_items AS t3 ON t2.order_id  =  t3.order_id WHERE t1.customer_name  =  \"Rodrick Heaney\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What is the total quantity of products purchased by \"Rodrick Heaney\"?",
+    "gold_sql": "SELECT sum(t3.order_quantity) FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id JOIN order_items AS t3 ON t2.order_id  =  t3.order_id WHERE t1.customer_name  =  \"Rodrick Heaney\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Tell me the total quantity of products bought by the customer called \"Rodrick Heaney\".",
+    "gold_sql": "SELECT sum(t3.order_quantity) FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id JOIN order_items AS t3 ON t2.order_id  =  t3.order_id WHERE t1.customer_name  =  \"Rodrick Heaney\"",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "How many customers have at least one order with status \"Cancelled\"?",
+    "gold_sql": "SELECT count(DISTINCT customer_id) FROM customer_orders WHERE order_status  =  \"Cancelled\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Return the number of customers who have at least one order with \"Cancelled\" status.",
+    "gold_sql": "SELECT count(DISTINCT customer_id) FROM customer_orders WHERE order_status  =  \"Cancelled\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "How many orders have detail \"Second time\"?",
+    "gold_sql": "SELECT count(*) FROM customer_orders WHERE order_details  =  \"Second time\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Tell me the number of orders with \"Second time\" as order detail.",
+    "gold_sql": "SELECT count(*) FROM customer_orders WHERE order_details  =  \"Second time\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the customer name and date of the orders that have the status \"Delivered\".",
+    "gold_sql": "SELECT t1.customer_name ,  t2.order_date FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id WHERE order_status  =  \"Delivered\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What are the customer name and date of the orders whose status is \"Delivered\".",
+    "gold_sql": "SELECT t1.customer_name ,  t2.order_date FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id WHERE order_status  =  \"Delivered\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What is the total number of products that are in orders with status \"Cancelled\"?",
+    "gold_sql": "SELECT sum(t2.order_quantity) FROM customer_orders AS t1 JOIN order_items AS t2 ON t1.order_id  =  t2.order_id WHERE t1.order_status  =  \"Cancelled\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the total quantity of products associated with the orders in the \"Cancelled\" status.",
+    "gold_sql": "SELECT sum(t2.order_quantity) FROM customer_orders AS t1 JOIN order_items AS t2 ON t1.order_id  =  t2.order_id WHERE t1.order_status  =  \"Cancelled\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the total amount of products ordered before 2018-03-17 07:13:53.",
+    "gold_sql": "SELECT sum(t2.order_quantity) FROM customer_orders AS t1 JOIN order_items AS t2 ON t1.order_id  =  t2.order_id WHERE t1.order_date  <  \"2018-03-17 07:13:53\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What is the total amount of products purchased before 2018-03-17 07:13:53?",
+    "gold_sql": "SELECT sum(t2.order_quantity) FROM customer_orders AS t1 JOIN order_items AS t2 ON t1.order_id  =  t2.order_id WHERE t1.order_date  <  \"2018-03-17 07:13:53\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Who made the latest order?",
+    "gold_sql": "SELECT t1.customer_name FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id ORDER BY t2.order_date DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the name of the customer who made an order most recently.",
+    "gold_sql": "SELECT t1.customer_name FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id ORDER BY t2.order_date DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Which product has been ordered most number of times?",
+    "gold_sql": "SELECT t2.product_details FROM order_items AS t1 JOIN products AS t2 ON t1.product_id  =  t2.product_id GROUP BY t1.product_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What is the most frequently ordered product? Tell me the detail of the product",
+    "gold_sql": "SELECT t2.product_details FROM order_items AS t1 JOIN products AS t2 ON t1.product_id  =  t2.product_id GROUP BY t1.product_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the name and ID of the product whose total order quantity is the largest.",
+    "gold_sql": "SELECT t2.product_details ,  t2.product_id FROM order_items AS t1 JOIN products AS t2 ON t1.product_id  =  t2.product_id GROUP BY t1.product_id ORDER BY sum(t1.order_quantity) LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What are the name and ID of the product bought the most.",
+    "gold_sql": "SELECT t2.product_details ,  t2.product_id FROM order_items AS t1 JOIN products AS t2 ON t1.product_id  =  t2.product_id GROUP BY t1.product_id ORDER BY sum(t1.order_quantity) LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find all the addresses in East Julianaside, Texas or in Gleasonmouth, Arizona.",
+    "gold_sql": "SELECT address_content FROM addresses WHERE city  =  \"East Julianaside\" AND state_province_county  =  \"Texas\" UNION SELECT address_content FROM addresses WHERE city  =  \"Gleasonmouth\" AND state_province_county  =  \"Arizona\"",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What are all the addresses in East Julianaside, Texas or in Gleasonmouth, Arizona.",
+    "gold_sql": "SELECT address_content FROM addresses WHERE city  =  \"East Julianaside\" AND state_province_county  =  \"Texas\" UNION SELECT address_content FROM addresses WHERE city  =  \"Gleasonmouth\" AND state_province_county  =  \"Arizona\"",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the name of customers who did not pay with Cash.",
+    "gold_sql": "SELECT customer_name FROM customers WHERE payment_method != 'Cash'",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What is the name of customers who do not use Cash as payment method.",
+    "gold_sql": "SELECT customer_name FROM customers WHERE payment_method != 'Cash'",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the names of customers who never ordered product Latte.",
+    "gold_sql": "SELECT customer_name FROM customers EXCEPT SELECT t1.customer_name FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id JOIN order_items AS t3 ON t2.order_id  =  t3.order_id JOIN products AS t4 ON t3.product_id  =  t4.product_id WHERE t4.product_details  =  'Latte'",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What are names of customers who never ordered product Latte.",
+    "gold_sql": "SELECT customer_name FROM customers EXCEPT SELECT t1.customer_name FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id JOIN order_items AS t3 ON t2.order_id  =  t3.order_id JOIN products AS t4 ON t3.product_id  =  t4.product_id WHERE t4.product_details  =  'Latte'",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the names of customers who never placed an order.",
+    "gold_sql": "SELECT customer_name FROM customers EXCEPT SELECT t1.customer_name FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What are the names of customers who never made an order.",
+    "gold_sql": "SELECT customer_name FROM customers EXCEPT SELECT t1.customer_name FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "Find the names of customers who ordered both products Latte and Americano.",
+    "gold_sql": "SELECT t1.customer_name FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id JOIN order_items AS t3 ON t2.order_id  =  t3.order_id JOIN products AS t4 ON t3.product_id  =  t4.product_id WHERE t4.product_details  =  'Latte' INTERSECT SELECT t1.customer_name FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id JOIN order_items AS t3 ON t2.order_id  =  t3.order_id JOIN products AS t4 ON t3.product_id  =  t4.product_id WHERE t4.product_details  =  'Americano'",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "customers_and_addresses",
+    "question": "What are the names of customers who have purchased both products Latte and Americano?",
+    "gold_sql": "SELECT t1.customer_name FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id JOIN order_items AS t3 ON t2.order_id  =  t3.order_id JOIN products AS t4 ON t3.product_id  =  t4.product_id WHERE t4.product_details  =  'Latte' INTERSECT SELECT t1.customer_name FROM customers AS t1 JOIN customer_orders AS t2 ON t1.customer_id  =  t2.customer_id JOIN order_items AS t3 ON t2.order_id  =  t3.order_id JOIN products AS t4 ON t3.product_id  =  t4.product_id WHERE t4.product_details  =  'Americano'",
+    "difficulty": "extra"
+  }
+]

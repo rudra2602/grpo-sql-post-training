@@ -1,0 +1,650 @@
+[
+  {
+    "db_id": "ship_1",
+    "question": "How many different captain ranks are there?",
+    "gold_sql": "SELECT count(DISTINCT rank) FROM captain",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Count the number of different ranks of captain.",
+    "gold_sql": "SELECT count(DISTINCT rank) FROM captain",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "How many captains are in each rank?",
+    "gold_sql": "SELECT count(*) ,  rank FROM captain GROUP BY rank",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Count the number of captains that have each rank.",
+    "gold_sql": "SELECT count(*) ,  rank FROM captain GROUP BY rank",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "How many captains with younger than 50 are in each rank?",
+    "gold_sql": "SELECT count(*) ,  rank FROM captain WHERE age  <  50 GROUP BY rank",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Count the number of captains younger than 50 of each rank.",
+    "gold_sql": "SELECT count(*) ,  rank FROM captain WHERE age  <  50 GROUP BY rank",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Sort all captain names by their ages from old to young.",
+    "gold_sql": "SELECT name FROM captain ORDER BY age DESC",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "What are the names of captains, sorted by age descending?",
+    "gold_sql": "SELECT name FROM captain ORDER BY age DESC",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Find the name, class and rank of all captains.",
+    "gold_sql": "SELECT name ,  CLASS ,  rank FROM captain",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "What are the names, classes, and ranks of all captains?",
+    "gold_sql": "SELECT name ,  CLASS ,  rank FROM captain",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Which rank is the most common among captains?",
+    "gold_sql": "SELECT rank FROM captain GROUP BY rank ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Return the rank for which there are the fewest captains.",
+    "gold_sql": "SELECT rank FROM captain GROUP BY rank ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Which classes have more than two captains?",
+    "gold_sql": "SELECT CLASS FROM captain GROUP BY CLASS HAVING count(*)  >  2",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Give the classes that have more than two captains.",
+    "gold_sql": "SELECT CLASS FROM captain GROUP BY CLASS HAVING count(*)  >  2",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Find the name of captains whose rank are either Midshipman or Lieutenant.",
+    "gold_sql": "SELECT name FROM captain WHERE rank  =  'Midshipman' OR rank  =  'Lieutenant'",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "What are the names of captains that have either the rank Midshipman or Lieutenant?",
+    "gold_sql": "SELECT name FROM captain WHERE rank  =  'Midshipman' OR rank  =  'Lieutenant'",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "What are the average and minimum age of captains in different class?",
+    "gold_sql": "SELECT avg(age) ,  min(age) ,  CLASS FROM captain GROUP BY CLASS",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Return the average and minimum age of captains in each class.",
+    "gold_sql": "SELECT avg(age) ,  min(age) ,  CLASS FROM captain GROUP BY CLASS",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Find the captain rank that has some captains in both Cutter and Armed schooner classes.",
+    "gold_sql": "SELECT rank FROM captain WHERE CLASS  =  'Cutter' INTERSECT SELECT rank FROM captain WHERE CLASS  =  'Armed schooner'",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "What are the ranks of captains that are both in the Cutter and Armed schooner classes?",
+    "gold_sql": "SELECT rank FROM captain WHERE CLASS  =  'Cutter' INTERSECT SELECT rank FROM captain WHERE CLASS  =  'Armed schooner'",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Find the captain rank that has no captain in Third-rate ship of the line class.",
+    "gold_sql": "SELECT rank FROM captain EXCEPT SELECT rank FROM captain WHERE CLASS  =  'Third-rate ship of the line'",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "What are the ranks of captains that have no captain that are in the Third-rate ship of the line class?",
+    "gold_sql": "SELECT rank FROM captain EXCEPT SELECT rank FROM captain WHERE CLASS  =  'Third-rate ship of the line'",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "What is the name of the youngest captain?",
+    "gold_sql": "SELECT name FROM captain ORDER BY age LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Return the name of the youngest captain.",
+    "gold_sql": "SELECT name FROM captain ORDER BY age LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "how many ships are there?",
+    "gold_sql": "SELECT count(*) FROM ship",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Count the number of ships.",
+    "gold_sql": "SELECT count(*) FROM ship",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Find the name, type, and flag of the ship that is built in the most recent year.",
+    "gold_sql": "SELECT name ,  TYPE ,  flag FROM ship ORDER BY built_year DESC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "What is the name, type, and flag of the ship that was built in the most recent year?",
+    "gold_sql": "SELECT name ,  TYPE ,  flag FROM ship ORDER BY built_year DESC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Group by ships by flag, and return number of ships that have each flag.",
+    "gold_sql": "SELECT count(*) ,  flag FROM ship GROUP BY flag",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "What are the different ship flags, and how many ships have each?",
+    "gold_sql": "SELECT count(*) ,  flag FROM ship GROUP BY flag",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Which flag is most widely used among all ships?",
+    "gold_sql": "SELECT flag FROM ship GROUP BY flag ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Return the flag that is most common among all ships.",
+    "gold_sql": "SELECT flag FROM ship GROUP BY flag ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "List all ship names in the order of built year and class.",
+    "gold_sql": "SELECT name FROM ship ORDER BY built_year ,  CLASS",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "What are the names of ships, ordered by year they were built and their class?",
+    "gold_sql": "SELECT name FROM ship ORDER BY built_year ,  CLASS",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Find the ship type that are used by both ships with Panama and Malta flags.",
+    "gold_sql": "SELECT TYPE FROM ship WHERE flag  =  'Panama' INTERSECT SELECT TYPE FROM ship WHERE flag  =  'Malta'",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "What types of ships have both ships that have Panama Flags and Malta flags?",
+    "gold_sql": "SELECT TYPE FROM ship WHERE flag  =  'Panama' INTERSECT SELECT TYPE FROM ship WHERE flag  =  'Malta'",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "In which year were most of ships built?",
+    "gold_sql": "SELECT built_year FROM ship GROUP BY built_year ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "What is the year in which most ships were built?",
+    "gold_sql": "SELECT built_year FROM ship GROUP BY built_year ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Find the name of the ships that have more than one captain.",
+    "gold_sql": "SELECT t1.name FROM ship AS t1 JOIN captain AS t2 ON t1.ship_id  =  t2.ship_id GROUP BY t2.ship_id HAVING count(*)  >  1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "What are the names of ships that have more than one captain?",
+    "gold_sql": "SELECT t1.name FROM ship AS t1 JOIN captain AS t2 ON t1.ship_id  =  t2.ship_id GROUP BY t2.ship_id HAVING count(*)  >  1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "what are the names and classes of the ships that do not have any captain yet?",
+    "gold_sql": "SELECT name ,  CLASS FROM ship WHERE ship_id NOT IN (SELECT ship_id FROM captain)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Return the names and classes of ships that do not have a captain?",
+    "gold_sql": "SELECT name ,  CLASS FROM ship WHERE ship_id NOT IN (SELECT ship_id FROM captain)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Find the name of the ship that is steered by the youngest captain.",
+    "gold_sql": "SELECT t1.name FROM ship AS t1 JOIN captain AS t2 ON t1.ship_id  =  t2.ship_id ORDER BY t2.age LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "What is the name of the ship that is commanded by the youngest captain?",
+    "gold_sql": "SELECT t1.name FROM ship AS t1 JOIN captain AS t2 ON t1.ship_id  =  t2.ship_id ORDER BY t2.age LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Find the name and flag of ships that are not steered by any captain with Midshipman rank.",
+    "gold_sql": "SELECT name ,  flag FROM ship WHERE ship_id NOT IN (SELECT ship_id FROM captain WHERE rank  =  'Midshipman')",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "What are the names and flags of ships that do not have a captain with the rank of Midshipman?",
+    "gold_sql": "SELECT name ,  flag FROM ship WHERE ship_id NOT IN (SELECT ship_id FROM captain WHERE rank  =  'Midshipman')",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "Find the name of the ships that are steered by both a captain with Midshipman rank and a captain with Lieutenant rank.",
+    "gold_sql": "SELECT t1.name FROM ship AS t1 JOIN captain AS t2 ON t1.ship_id  =  t2.ship_id WHERE t2.rank  =  'Midshipman' INTERSECT SELECT t1.name FROM ship AS t1 JOIN captain AS t2 ON t1.ship_id  =  t2.ship_id WHERE t2.rank  =  'Lieutenant'",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "ship_1",
+    "question": "What are the names of ships that are commanded by both captains with the rank of Midshipman and captains with the rank of Lieutenant?",
+    "gold_sql": "SELECT t1.name FROM ship AS t1 JOIN captain AS t2 ON t1.ship_id  =  t2.ship_id WHERE t2.rank  =  'Midshipman' INTERSECT SELECT t1.name FROM ship AS t1 JOIN captain AS t2 ON t1.ship_id  =  t2.ship_id WHERE t2.rank  =  'Lieutenant'",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "What is the id of the most recent order?",
+    "gold_sql": "SELECT order_id FROM orders ORDER BY date_order_placed DESC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Find the id of the order made most recently.",
+    "gold_sql": "SELECT order_id FROM orders ORDER BY date_order_placed DESC LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "what are the order id and customer id of the oldest order?",
+    "gold_sql": "SELECT order_id ,  customer_id FROM orders ORDER BY date_order_placed LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Find the order id and customer id associated with the oldest order.",
+    "gold_sql": "SELECT order_id ,  customer_id FROM orders ORDER BY date_order_placed LIMIT 1",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Find the id of the order whose shipment tracking number is \"3452\".",
+    "gold_sql": "SELECT order_id FROM shipments WHERE shipment_tracking_number = \"3452\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Which order's shipment tracking number is \"3452\"? Give me the id of the order.",
+    "gold_sql": "SELECT order_id FROM shipments WHERE shipment_tracking_number = \"3452\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Find the ids of all the order items whose product id is 11.",
+    "gold_sql": "SELECT order_item_id FROM order_items WHERE product_id = 11",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Find all the order items whose product id is 11. What are the order item ids?",
+    "gold_sql": "SELECT order_item_id FROM order_items WHERE product_id = 11",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "List the name of all the distinct customers who have orders with status \"Packing\".",
+    "gold_sql": "SELECT DISTINCT T1.customer_name FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status = \"Packing\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Which customers have orders with status \"Packing\"? Give me the customer names.",
+    "gold_sql": "SELECT DISTINCT T1.customer_name FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status = \"Packing\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Find the details of all the distinct customers who have orders with status \"On Road\".",
+    "gold_sql": "SELECT DISTINCT T1.customer_details FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status = \"On Road\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "What are the distinct customers who have orders with status \"On Road\"? Give me the customer details?",
+    "gold_sql": "SELECT DISTINCT T1.customer_details FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status = \"On Road\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "What is the name of the customer who has the most orders?",
+    "gold_sql": "SELECT T1.customer_name FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Which customer made the most orders? Find the customer name.",
+    "gold_sql": "SELECT T1.customer_name FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "What is the customer id of the customer who has the most orders?",
+    "gold_sql": "SELECT T1.customer_id FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Find the id of the customer who made the most orders.",
+    "gold_sql": "SELECT T1.customer_id FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id  =  T2.customer_id GROUP BY T1.customer_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Give me a list of id and status of orders which belong to the customer named \"Jeramie\".",
+    "gold_sql": "SELECT T2.order_id ,  T2.order_status FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T1.customer_name = \"Jeramie\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Which orders are made by the customer named \"Jeramie\"? Give me the order ids and status.",
+    "gold_sql": "SELECT T2.order_id ,  T2.order_status FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T1.customer_name = \"Jeramie\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Find the dates of orders which belong to the customer named \"Jeramie\".",
+    "gold_sql": "SELECT T2.date_order_placed FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T1.customer_name = \"Jeramie\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "What are the dates of the orders made by the customer named \"Jeramie\"?",
+    "gold_sql": "SELECT T2.date_order_placed FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T1.customer_name = \"Jeramie\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Give me the names of customers who have placed orders between 2009-01-01 and 2010-01-01.",
+    "gold_sql": "SELECT T1.customer_name FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.date_order_placed >= \"2009-01-01\" AND T2.date_order_placed <= \"2010-01-01\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Which customers made orders between 2009-01-01 and 2010-01-01? Find their names.",
+    "gold_sql": "SELECT T1.customer_name FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.date_order_placed >= \"2009-01-01\" AND T2.date_order_placed <= \"2010-01-01\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Give me a list of distinct product ids from orders placed between 1975-01-01 and 1976-01-01?",
+    "gold_sql": "SELECT DISTINCT T2.product_id FROM orders AS T1 JOIN order_items AS T2 ON T1.order_id = T2.order_id WHERE T1.date_order_placed >= \"1975-01-01\" AND T1.date_order_placed <= \"1976-01-01\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "What are the distinct ids of products ordered between 1975-01-01 and 1976-01-01??",
+    "gold_sql": "SELECT DISTINCT T2.product_id FROM orders AS T1 JOIN order_items AS T2 ON T1.order_id = T2.order_id WHERE T1.date_order_placed >= \"1975-01-01\" AND T1.date_order_placed <= \"1976-01-01\"",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Find the names of the customers who have order status both \"On Road\" and \"Shipped\".",
+    "gold_sql": "SELECT T1.customer_name FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status = \"On Road\" INTERSECT SELECT T1.customer_name FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status = \"Shipped\"",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Which customers have both \"On Road\" and \"Shipped\" as order status? List the customer names.",
+    "gold_sql": "SELECT T1.customer_name FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status = \"On Road\" INTERSECT SELECT T1.customer_name FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status = \"Shipped\"",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Find the id of the customers who have order status both \"On Road\" and \"Shipped\".",
+    "gold_sql": "SELECT T1.customer_id FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status = \"On Road\" INTERSECT SELECT T1.customer_id FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status = \"Shipped\"",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Which customers have both \"On Road\" and \"Shipped\" as order status? List the customer ids.",
+    "gold_sql": "SELECT T1.customer_id FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status = \"On Road\" INTERSECT SELECT T1.customer_id FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id WHERE T2.order_status = \"Shipped\"",
+    "difficulty": "extra"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "When was the order placed whose shipment tracking number is 3452? Give me the date.",
+    "gold_sql": "SELECT T1.date_order_placed FROM orders AS T1 JOIN shipments AS T2 ON T1.order_id = T2.order_id WHERE T2.shipment_tracking_number = 3452",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "On which day was the order placed whose shipment tracking number is 3452?",
+    "gold_sql": "SELECT T1.date_order_placed FROM orders AS T1 JOIN shipments AS T2 ON T1.order_id = T2.order_id WHERE T2.shipment_tracking_number = 3452",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "What is the placement date of the order whose invoice number is 10?",
+    "gold_sql": "SELECT T1.date_order_placed FROM orders AS T1 JOIN shipments AS T2 ON T1.order_id = T2.order_id WHERE T2.invoice_number = 10",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "On what day was the order with invoice number 10 placed?",
+    "gold_sql": "SELECT T1.date_order_placed FROM orders AS T1 JOIN shipments AS T2 ON T1.order_id = T2.order_id WHERE T2.invoice_number = 10",
+    "difficulty": "medium"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "List the count and id of each product in all the orders.",
+    "gold_sql": "SELECT count(*) ,  T3.product_id FROM orders AS T1 JOIN order_items AS T2 JOIN products AS T3 ON T1.order_id = T2.order_id AND T2.product_id = T3.product_id GROUP BY T3.product_id",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "For each product, return its id and the number of times it was ordered.",
+    "gold_sql": "SELECT count(*) ,  T3.product_id FROM orders AS T1 JOIN order_items AS T2 JOIN products AS T3 ON T1.order_id = T2.order_id AND T2.product_id = T3.product_id GROUP BY T3.product_id",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "List the name and count of each product in all orders.",
+    "gold_sql": "SELECT T3.product_name ,  count(*) FROM orders AS T1 JOIN order_items AS T2 JOIN products AS T3 ON T1.order_id = T2.order_id AND T2.product_id = T3.product_id GROUP BY T3.product_id",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "For each product, show its name and the number of times it was ordered.",
+    "gold_sql": "SELECT T3.product_name ,  count(*) FROM orders AS T1 JOIN order_items AS T2 JOIN products AS T3 ON T1.order_id = T2.order_id AND T2.product_id = T3.product_id GROUP BY T3.product_id",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Find the ids of orders which are shipped after 2000-01-01.",
+    "gold_sql": "SELECT order_id FROM shipments WHERE shipment_date > \"2000-01-01\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Which orders have shipment after 2000-01-01? Give me the order ids.",
+    "gold_sql": "SELECT order_id FROM shipments WHERE shipment_date > \"2000-01-01\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Find the id of the order which is shipped most recently.",
+    "gold_sql": "SELECT order_id FROM shipments WHERE shipment_date  =  (SELECT max(shipment_date) FROM shipments)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Which order has the most recent shipment? Give me the order id.",
+    "gold_sql": "SELECT order_id FROM shipments WHERE shipment_date  =  (SELECT max(shipment_date) FROM shipments)",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "List the names of all distinct products in alphabetical order.",
+    "gold_sql": "SELECT DISTINCT product_name FROM products ORDER BY product_name",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Sort all the distinct products in alphabetical order.",
+    "gold_sql": "SELECT DISTINCT product_name FROM products ORDER BY product_name",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "List the ids of all distinct orders ordered by placed date.",
+    "gold_sql": "SELECT DISTINCT order_id FROM orders ORDER BY date_order_placed",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "What are ids of the all distinct orders, sorted by placement date?",
+    "gold_sql": "SELECT DISTINCT order_id FROM orders ORDER BY date_order_placed",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "What is the id of the order which has the most items?",
+    "gold_sql": "SELECT T1.order_id FROM orders AS T1 JOIN order_items AS T2 ON T1.order_id = T2.order_id GROUP BY T1.order_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Which order deals with the most items? Return the order id.",
+    "gold_sql": "SELECT T1.order_id FROM orders AS T1 JOIN order_items AS T2 ON T1.order_id = T2.order_id GROUP BY T1.order_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "What is the name of the customer who has the largest number of orders?",
+    "gold_sql": "SELECT T1.customer_name FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id GROUP BY T1.customer_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Find the name of the customer who made the most orders.",
+    "gold_sql": "SELECT T1.customer_name FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id GROUP BY T1.customer_id ORDER BY count(*) DESC LIMIT 1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Find the invoice numbers which are created before 1989-09-03 or after 2007-12-25.",
+    "gold_sql": "SELECT invoice_number FROM invoices WHERE invoice_date < \"1989-09-03\" OR invoice_date > \"2007-12-25\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "What are the invoice numbers created before 1989-09-03 or after 2007-12-25?",
+    "gold_sql": "SELECT invoice_number FROM invoices WHERE invoice_date < \"1989-09-03\" OR invoice_date > \"2007-12-25\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Find the distinct details of invoices which are created before 1989-09-03 or after 2007-12-25.",
+    "gold_sql": "SELECT DISTINCT invoice_details FROM invoices WHERE invoice_date < \"1989-09-03\" OR invoice_date > \"2007-12-25\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "What are the distinct details of invoices created before 1989-09-03 or after 2007-12-25?",
+    "gold_sql": "SELECT DISTINCT invoice_details FROM invoices WHERE invoice_date < \"1989-09-03\" OR invoice_date > \"2007-12-25\"",
+    "difficulty": "easy"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "For each customer who has at least two orders, find the customer name and number of orders made.",
+    "gold_sql": "SELECT T2.customer_name ,  count(*) FROM orders AS T1 JOIN customers AS T2 ON T1.customer_id = T2.customer_id GROUP BY T2.customer_id HAVING count(*)  >=  2",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Which customers have made at least two orders? Give me each customer name and number of orders made.",
+    "gold_sql": "SELECT T2.customer_name ,  count(*) FROM orders AS T1 JOIN customers AS T2 ON T1.customer_id = T2.customer_id GROUP BY T2.customer_id HAVING count(*)  >=  2",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Find the name of the customers who have at most two orders.",
+    "gold_sql": "SELECT T2.customer_name FROM orders AS T1 JOIN customers AS T2 ON T1.customer_id = T2.customer_id GROUP BY T2.customer_id HAVING count(*)  <=  2",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "What are the names of the customers who have made two or less orders?",
+    "gold_sql": "SELECT T2.customer_name FROM orders AS T1 JOIN customers AS T2 ON T1.customer_id = T2.customer_id GROUP BY T2.customer_id HAVING count(*)  <=  2",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "List the names of the customers who have once bought product \"food\".",
+    "gold_sql": "SELECT T1.customer_name FROM customers AS T1 JOIN orders AS T2 JOIN order_items AS T3 JOIN products AS T4 ON T1.customer_id = T2.customer_id AND T2.order_id = T3.order_id AND T3.product_id = T4.product_id WHERE T4.product_name = \"food\" GROUP BY T1.customer_id HAVING count(*)  >=  1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "What are the names of the customers who bought product \"food\" at least once?",
+    "gold_sql": "SELECT T1.customer_name FROM customers AS T1 JOIN orders AS T2 JOIN order_items AS T3 JOIN products AS T4 ON T1.customer_id = T2.customer_id AND T2.order_id = T3.order_id AND T3.product_id = T4.product_id WHERE T4.product_name = \"food\" GROUP BY T1.customer_id HAVING count(*)  >=  1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "List the names of customers who have once canceled the purchase of the product \"food\" (the item status is \"Cancel\").",
+    "gold_sql": "SELECT T1.customer_name FROM customers AS T1 JOIN orders AS T2 JOIN order_items AS T3 JOIN products AS T4 ON T1.customer_id = T2.customer_id AND T2.order_id = T3.order_id AND T3.product_id = T4.product_id WHERE T3.order_item_status = \"Cancel\" AND T4.product_name = \"food\" GROUP BY T1.customer_id HAVING count(*)  >=  1",
+    "difficulty": "hard"
+  },
+  {
+    "db_id": "tracking_orders",
+    "question": "Which customers have ever canceled the purchase of the product \"food\" (the item status is \"Cancel\")?",
+    "gold_sql": "SELECT T1.customer_name FROM customers AS T1 JOIN orders AS T2 JOIN order_items AS T3 JOIN products AS T4 ON T1.customer_id = T2.customer_id AND T2.order_id = T3.order_id AND T3.product_id = T4.product_id WHERE T3.order_item_status = \"Cancel\" AND T4.product_name = \"food\" GROUP BY T1.customer_id HAVING count(*)  >=  1",
+    "difficulty": "hard"
+  }
+]
