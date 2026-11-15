@@ -68,7 +68,10 @@ def main() -> None:
     from peft import LoraConfig
     from transformers import TrainerCallback
     from trl import GRPOConfig, GRPOTrainer
-    import wandb
+    try:
+        import wandb
+    except ImportError:
+        wandb = None
 
     class EmptyCacheCallback(TrainerCallback):
         """Clears CUDA memory cache after each optimization step to eliminate fragmentation."""
@@ -119,7 +122,7 @@ def main() -> None:
         if len(rewards) >= args.group_size:
             groups = [rewards[i:i + args.group_size] for i in range(0, len(rewards), args.group_size)]
             zero_var_flags = [bool(np.std(g) == 0.0) for g in groups if len(g) == args.group_size]
-            if zero_var_flags and wandb.run is not None:
+            if zero_var_flags and wandb is not None and wandb.run is not None:
                 frac = float(np.mean(zero_var_flags))
                 wandb.log({"train/zero_reward_variance_fraction": frac})
 
@@ -142,7 +145,7 @@ def main() -> None:
         save_steps=args.save_steps,
         logging_steps=1,
         save_total_limit=3,
-        report_to="wandb" if wandb.run is not None else "none",
+        report_to="wandb" if wandb is not None and wandb.run is not None else "none",
         use_vllm=False,
         fp16=torch.cuda.is_available(),
     )
