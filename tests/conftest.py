@@ -4,9 +4,15 @@ Shared pytest fixtures and test configurations for GRPO SQL test suite.
 
 from pathlib import Path
 import sqlite3
+import sys
 import tempfile
 from typing import Dict, List, Tuple
 import pytest
+
+# Ensure project root is in sys.path regardless of execution environment
+ROOT_DIR = str(Path(__file__).resolve().parent.parent)
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 
 @pytest.fixture
