@@ -320,6 +320,9 @@ def main() -> None:
   try:
     import peft.import_utils
     peft.import_utils.is_torchao_available = lambda: False
+    import peft.tuners.lora.torchao
+    peft.tuners.lora.torchao.is_torchao_available = lambda: False
+    peft.tuners.lora.torchao.dispatch_torchao = lambda *args, **kwargs: None
   except Exception:
     pass
 
