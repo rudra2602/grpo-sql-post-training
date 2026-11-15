@@ -95,6 +95,18 @@ This document is your personal technical handbook for interviews with DP World (
 * **Plain Language:** Setting temperature to 0 means the model always picks the single most probable token. There is zero randomness.
 * **Why it matters:** If you evaluate with random sampling, your accuracy can fluctuate by $\pm 4\%$ just from lucky rolls of the dice. Greedy decoding makes every evaluation 100% deterministic and reproducible, which is the official standard for benchmarks like Spider.
 
+### 3. How does the Automated 5-Class Failure Taxonomy work in `src/evaluate.py`?
+* **Plain Language:** In real-world enterprise ML, saying *"the model failed 35 questions"* is useless feedback. We need to know *why* it failed. Our diagnostic evaluation script (`src/evaluate.py`) inspects SQLite execution states and assigns every incorrect query to one of 5 deterministic failure buckets:
+  1. `TIMEOUT_ABORT`: The query exceeded our 1.0s sandbox limit (triggered by runaway Cartesian cross-joins like `SELECT * FROM A, B, C, D` with missing `ON` conditions).
+  2. `SCHEMA_HALLUCINATION`: SQLite raised `no such table` or `no such column`, proving the model invented table or column names not in the prompt DDL.
+  3. `SYNTAX_ERROR`: SQLite parser rejection (unclosed quotes, missing keywords, broken SQL).
+  4. `EMPTY_RESULT`: Query executed without syntax error, but returned 0 rows against a non-empty reference result (indicating over-constrained filters, like `WHERE age > 100 AND age < 20`).
+  5. `VALUE_MISMATCH`: Query executed cleanly and returned data, but the multiset of rows differed from gold ground truth (wrong projection, bad join condition, or wrong aggregate function).
+* **Why it matters:**
+  - Standard text-to-SQL benchmarks report a flat binary execution accuracy. By formulating an automated 5-class taxonomy, we can track the exact error shifts during RL training. We can mathematically prove that GRPO post-training did not merely increase overall accuracy, but specifically eliminated runaway cartesian joins and grounded the model's attention to avoid hallucinating schema columns.
+* **Interview Talking Point:**
+  *"Instead of treating evaluation as a black-box percentage, we built an automated 5-class diagnostic failure taxonomy in `src/evaluate.py`. Whenever a generated query fails multiset equivalence, our harness analyzes SQLite error codes and row returns to categorize the failure into Syntax Error, Schema Hallucination, Timeout Abort, Empty Result, or Value Mismatch. This allows us to prove which specific relational reasoning failure modes reinforcement learning eliminated."*
+
 ---
 
 ## Phase 3: GRPO (Group Relative Policy Optimization)
