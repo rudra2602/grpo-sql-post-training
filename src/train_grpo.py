@@ -32,7 +32,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max_steps", type=int, default=100, help="Total training steps.")
     parser.add_argument("--group_size", type=int, default=4, help="Number of completions per prompt group (G).")
     parser.add_argument("--batch_size", type=int, default=1, help="Per-device prompt batch size.")
-    parser.add_argument("--gradient_accumulation_steps", type=int, default=8, help="Gradient accumulation steps.")
+    parser.add_argument("--gradient_accumulation_steps", type=int, default=2, help="Gradient accumulation steps.")
     parser.add_argument("--lr", type=float, default=1e-5, help="Learning rate.")
     parser.add_argument("--kl_beta", type=float, default=0.005, help="KL penalty coefficient (beta).")
     parser.add_argument("--lora_r", type=int, default=16, help="LoRA rank.")
@@ -48,6 +48,9 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    import os
+    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
     args = parse_args()
 
     # Workaround for Colab pre-installed torchao (<0.16.0) triggering PEFT version mismatch error
@@ -63,8 +66,15 @@ def main() -> None:
     import torch
     from datasets import Dataset
     from peft import LoraConfig
+    from transformers import TrainerCallback
     from trl import GRPOConfig, GRPOTrainer
     import wandb
+
+    class EmptyCacheCallback(TrainerCallback):
+        """Clears CUDA memory cache after each optimization step to eliminate fragmentation."""
+        def on_step_end(self, args, state, control, **kwargs):
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
 
     print("=" * 60)
     print("STARTING GRPO POST-TRAINING RUN")
@@ -122,6 +132,8 @@ def main() -> None:
         max_steps=args.max_steps,
         per_device_train_batch_size=args.batch_size,
         gradient_accumulation_steps=args.gradient_accumulation_steps,
+        gradient_checkpointing=True,
+        gradient_checkpointing_kwargs={"use_reentrant": False},
         num_generations=args.group_size,
         max_completion_length=args.max_completion_length,
         temperature=args.temperature,
@@ -143,6 +155,7 @@ def main() -> None:
         args=training_args,
         train_dataset=train_dataset,
         peft_config=peft_config,
+        callbacks=[EmptyCacheCallback()],
     )
 
     # 6. Execute Training Loop
