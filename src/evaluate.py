@@ -13,7 +13,13 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 import re
+import sys
 from typing import Any, Dict, List, Optional, Tuple, Union
+
+# Ensure project root is in sys.path when invoked directly as python src/evaluate.py
+ROOT_DIR = str(Path(__file__).resolve().parent.parent)
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 from src.data_loader import format_sql_prompt, load_logistics_dataset
 from src.executor import SafeSQLExecutor

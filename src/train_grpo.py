@@ -12,8 +12,14 @@ Features:
 
 import argparse
 from pathlib import Path
+import sys
 from typing import Any, Dict, List
 import numpy as np
+
+# Ensure project root is in sys.path when invoked directly as python src/train_grpo.py
+ROOT_DIR = str(Path(__file__).resolve().parent.parent)
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 from src.data_loader import prepare_grpo_dataset
 from src.reward import grpo_sql_reward_func

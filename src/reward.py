@@ -14,7 +14,13 @@ from collections import Counter
 from pathlib import Path
 import re
 import sqlite3
+import sys
 from typing import Any, List, Optional, Set, Tuple, Union
+
+# Ensure project root is in sys.path
+ROOT_DIR = str(Path(__file__).resolve().parent.parent)
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 from src.executor import SafeSQLExecutor
 
