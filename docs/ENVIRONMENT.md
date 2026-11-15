@@ -50,7 +50,7 @@ Run this cell at the start of your Colab session (`notebooks/colab_train.ipynb`)
 !nvidia-smi
 
 # 2. Clone the repository
-!git clone https://github.com/<YOUR_USERNAME>/grpo-sql-post-training.git
+!git clone https://github.com/rudra2602/grpo-sql-post-training.git
 %cd grpo-sql-post-training
 
 # 3. Install required packages
