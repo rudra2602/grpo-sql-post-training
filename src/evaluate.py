@@ -316,6 +316,13 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
   args = parse_args()
 
+  # Workaround for Colab pre-installed torchao (<0.16.0) triggering PEFT version mismatch error
+  try:
+    import peft.import_utils
+    peft.import_utils.is_torchao_available = lambda: False
+  except Exception:
+    pass
+
   import torch
   from transformers import AutoModelForCausalLM, AutoTokenizer
 
