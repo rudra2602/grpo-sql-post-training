@@ -38,7 +38,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--lora_r", type=int, default=16, help="LoRA rank.")
     parser.add_argument("--lora_alpha", type=int, default=32, help="LoRA alpha.")
     parser.add_argument("--lora_dropout", type=float, default=0.05, help="LoRA dropout.")
-    parser.add_argument("--max_prompt_length", type=int, default=512, help="Maximum prompt length tokens.")
     parser.add_argument("--max_completion_length", type=int, default=96, help="Maximum completion generation tokens.")
     parser.add_argument("--temperature", type=float, default=0.7, help="Rollout sampling temperature.")
     parser.add_argument("--top_p", type=float, default=0.9, help="Rollout top-p sampling.")

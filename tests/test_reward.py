@@ -176,3 +176,21 @@ def test_grpo_sql_reward_func_batch(reward_db_path: Path):
     assert len(rewards) == 2
     assert rewards[0] == 1.0
     assert rewards[1] == 0.3
+
+
+def test_grpo_sql_reward_func_chat_dict_and_expansion(reward_db_path: Path):
+    """Test TRL batch reward callable with chat formatted dicts and expansion."""
+    gold_sqls = [
+        "SELECT tracking_number FROM containers WHERE container_id = 1;",
+    ]
+    # G=2 completions for 1 prompt, formatted as chat dicts
+    completions = [
+        [{"role": "assistant", "content": "```sql\nSELECT tracking_number FROM containers WHERE container_id = 1;\n```"}],
+        [{"role": "assistant", "content": "```sql\nSELECT tracking_number FROM containers WHERE container_id = 999;\n```"}],
+    ]
+    db_paths = [reward_db_path]
+
+    rewards = grpo_sql_reward_func(completions, gold_sqls, db_paths)
+    assert len(rewards) == 2
+    assert rewards[0] == 1.0
+    assert rewards[1] == 0.3

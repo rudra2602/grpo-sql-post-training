@@ -33,13 +33,25 @@ TABLE_REF_REGEX = re.compile(r"\b(?:FROM|JOIN)\s+[\"`']?([a-zA-Z0-9_]+)[\"`']?",
 SQL_BLOCK_REGEX = re.compile(r"```(?:sql)?\s*(.*?)\s*```", re.DOTALL | re.IGNORECASE)
 
 
-def extract_sql_query(text: str) -> Tuple[str, bool]:
+def extract_sql_query(text: Any) -> Tuple[str, bool]:
     """
     Extract SQL query string from model completion.
+    Gracefully handles raw strings, chat formatted dicts, or lists of message dicts from TRL.
+
     Returns:
         Tuple of (cleaned_sql, has_markdown_fence).
     """
-    if not text or not text.strip():
+    if isinstance(text, list):
+        if len(text) > 0 and isinstance(text[0], dict) and "content" in text[0]:
+            text = text[0]["content"]
+        elif len(text) > 0 and isinstance(text[0], str):
+            text = text[0]
+        else:
+            text = str(text)
+    elif isinstance(text, dict):
+        text = text.get("content", str(text))
+
+    if not isinstance(text, str) or not text.strip():
         return "", False
 
     match = SQL_BLOCK_REGEX.search(text)
@@ -182,7 +194,7 @@ def compute_sql_reward(
 
 
 def grpo_sql_reward_func(
-    completions: List[str],
+    completions: List[Any],
     gold_sql: List[str],
     db_path: List[Union[str, Path, sqlite3.Connection]],
     reward_mode: str = "tiered",
@@ -192,6 +204,12 @@ def grpo_sql_reward_func(
     TRL GRPOTrainer batch reward callable.
     Computes rewards across a batch of candidate rollout completions.
     """
+    # Defensive alignment: Ensure gold_sql and db_path match completions count
+    if len(gold_sql) > 0 and len(completions) > len(gold_sql) and len(completions) % len(gold_sql) == 0:
+        multiplier = len(completions) // len(gold_sql)
+        gold_sql = [g for g in gold_sql for _ in range(multiplier)]
+        db_path = [d for d in db_path for _ in range(multiplier)]
+
     rewards: List[float] = []
     for pred, gold, db in zip(completions, gold_sql, db_path):
         r = compute_sql_reward(pred, gold, db, reward_mode=reward_mode)
