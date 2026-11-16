@@ -133,3 +133,30 @@ This document records every major design decision made during the planning phase
   * *Option C:* Notebook-only development.
 * **Selected Choice:** **Option A (Modular Package + Local `pytest` Suite)**
 * **Rationale:** 100% verifiable bug-free reward logic before touching GPU compute. Professional directory layout demonstrates engineering rigor to DP World interviewers.
+
+---
+
+### **Decision 13: Authorized Evaluation Harness v2 Update & Artifact Freezing**
+* **Context:** Analysis of initial v1 evaluations revealed that `max_new_tokens=128` caused 82/108 completions to be truncated mid-thought before emitting fenced SQL blocks. The resulting English prose was executed as SQL and incorrectly classified as `SYNTAX_ERROR`. Furthermore, `docs/baseline_eval.json` was missing from the repository, and hardware/precision varied across runs. While `AGENTS.md` normally freezes evaluation code, the user explicitly authorized a limited v2 harness upgrade.
+* **Options Considered:**
+  * *Option A:* Keep v1 results and attempt to explain the 128-token truncation verbally in interviews without changing code.
+  * *Option B:* Freeze v1 evaluation artifacts (`eval_v1_grpo.json`, `eval_v1_5step.json`) and build Evaluation Harness v2 with:
+    1. Default `max_new_tokens=512`.
+    2. Per-question generated token count and `hit_token_limit` tracking.
+    3. A 6th error category `NO_SQL_EXTRACTED` for non-SQL conversational outputs.
+    4. Explicit precision/quantization CLI option and metadata tracking.
+* **Selected Choice:** **Option B (Freeze v1 as baseline, introduce Evaluation Harness v2)**
+* **Rationale:** A fair, rigorous re-evaluation requires identical hardware, identical precision, and sufficient generation tokens (512) so the model is evaluated on its SQL capability rather than token truncation. Freezing v1 preserves historical reproducibility while v2 provides honest, scientifically valid metrics for DP World review.
+
+---
+
+### **Decision 14: Decision Gate — Report Verified v2 Results (Option A) vs. New Training Run (Option B)**
+* **Context:** The v2 evaluation revealed that the true base model capability is 58.33% EX (63/108) with 100% format adherence and 87.04% valid SQL. The post-trained GRPO model achieved 60.19% EX (65/108), yielding a +1.85% net gain (+2 queries on `ship_1`) with zero regressions ($b = 0$). An exact McNemar test indicated $p = 0.5000$, showing that this difference is within statistical sampling noise. We must decide whether to report these verified results honestly or attempt an overnight training run (RUN-04).
+* **Options Considered:**
+  * *Option A (Report Verified Results Honestly):* Document the verified v2 numbers with full statistical rigor (Wilson CIs, exact McNemar test, and failure analysis of the 2 repaired queries).
+  * *Option B (Launch RUN-04):* Run 100+ steps of GRPO on the local RTX 4050 (~2+ hours of GPU compute).
+* **Selected Choice:** **Option A (Report Verified Results Honestly)**
+* **Rationale:**
+  1. **Interview Alignment:** In an "LLM Post-Training and Evaluation" track for DP World, diagnosing an evaluation artifact (the 128-token limit), eliminating false claims, computing Wilson confidence intervals, and demonstrating zero regressions ($b=0$) showcases senior-level evaluation engineering and scientific integrity.
+  2. **Technical Constraints:** During training, `max_completion_length = 96` and the reward heavily weights format (+0.1) and syntax (+0.2). Because the base model already achieves 100% format adherence and 87% valid SQL, further training without redesigning the reward risks policy degradation or reward hacking.
+  3. **Deadline Safety:** Avoids thermal or preemption risks before the hard 7:30 AM IST resume deadline.

@@ -215,10 +215,10 @@ This consolidated audit was performed across five sequential review stages in ac
 
 ## 4. Deliverable Files Summary
 
-The following report artifacts have been written to the repository root:
-* [zoom_out_report.md](file:///c:/Users/Rudra/ml-prep/GRPO%20with%20an%20SQL-execution%20reward/zoom_out_report.md): Stage 5 Initial Zoom Out & TRIZ Contradictions.
-* [comprehension_report.md](file:///c:/Users/Rudra/ml-prep/GRPO%20with%20an%20SQL-execution%20reward/comprehension_report.md): Stage 6 Comprehension Test & Reader Paraphrase.
-* [critic_report.md](file:///c:/Users/Rudra/ml-prep/GRPO%20with%20an%20SQL-execution%20reward/critic_report.md): Stage 7 Hostile Design, Structural, and Style Review on FeatureRange.
-* [intermediate_zoom_out_report.md](file:///c:/Users/Rudra/ml-prep/GRPO%20with%20an%20SQL-execution%20reward/intermediate_zoom_out_report.md): Stage 8 Intermediate Zoom Out & Anti-Overengineering Audit.
-* [implementation_readiness_report.md](file:///c:/Users/Rudra/ml-prep/GRPO%20with%20an%20SQL-execution%20reward/implementation_readiness_report.md): Stage 9 Implementation Readiness & Codebase Details on DetailedRange.
-* [consolidated_review_report.md](file:///c:/Users/Rudra/ml-prep/GRPO%20with%20an%20SQL-execution%20reward/consolidated_review_report.md): Master deliverable synthesizing all 45 findings into 16 actionable tasks with a full traceability matrix.
+The following report artifacts have been written and archived in `docs/reviews/`:
+* [zoom_out_report.md](file:///c:/Users/Rudra/ml-prep/GRPO%20with%20an%20SQL-execution%20reward/docs/reviews/zoom_out_report.md): Stage 5 Initial Zoom Out & TRIZ Contradictions.
+* [comprehension_report.md](file:///c:/Users/Rudra/ml-prep/GRPO%20with%20an%20SQL-execution%20reward/docs/reviews/comprehension_report.md): Stage 6 Comprehension Test & Reader Paraphrase.
+* [critic_report.md](file:///c:/Users/Rudra/ml-prep/GRPO%20with%20an%20SQL-execution%20reward/docs/reviews/critic_report.md): Stage 7 Hostile Design, Structural, and Style Review on FeatureRange.
+* [intermediate_zoom_out_report.md](file:///c:/Users/Rudra/ml-prep/GRPO%20with%20an%20SQL-execution%20reward/docs/reviews/intermediate_zoom_out_report.md): Stage 8 Intermediate Zoom Out & Anti-Overengineering Audit.
+* [implementation_readiness_report.md](file:///c:/Users/Rudra/ml-prep/GRPO%20with%20an%20SQL-execution%20reward/docs/reviews/implementation_readiness_report.md): Stage 9 Implementation Readiness & Codebase Details on DetailedRange.
+* [consolidated_review_report.md](file:///c:/Users/Rudra/ml-prep/GRPO%20with%20an%20SQL-execution%20reward/docs/reviews/consolidated_review_report.md): Master deliverable synthesizing all 45 findings into 16 actionable tasks with a full traceability matrix.

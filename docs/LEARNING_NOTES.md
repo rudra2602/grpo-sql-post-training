@@ -96,5 +96,46 @@ This document is your personal technical handbook for interviews with DP World (
 
 ---
 
+## Phase 5: Rigorous Re-Evaluation & Artifact Freezing (Harness v2)
+
+### Step 1: Why did we freeze v1 and what did we discover about the 128-token wall?
+* **Plain Language:** When we inspected the raw model outputs from the first evaluation (v1), we discovered that the model was trying to think step-by-step before writing code (e.g. *"Let's walk through the question..."*). But because generation was cut off at 128 tokens, it stopped in the middle of a sentence before ever writing the SQL code. The evaluation script grabbed that incomplete English sentence, tried to run it in SQLite, and flagged it as a `SYNTAX_ERROR`.
+* **Why freezing matter:** Instead of deleting or overwriting the original files, we renamed them to `eval_v1_grpo.json` and `eval_v1_5step.json`. In real-world data science and research, you never erase historical experiment records; you preserve them transparently so that any auditor or interviewer can see the progression and understand why the methodology was refined.
+* **Interview Talking Point:**
+  *"When auditing our initial benchmark results, we noticed an evaluation artifact: a 128-token cap truncated chain-of-thought completions before fenced SQL blocks could be emitted. Rather than papering over this, we froze the initial results as v1, documented the missing baseline artifact honestly, and designed an authorized v2 evaluation protocol with extended token limits, truncation detection, and explicit precision tracking."*
+
+### Step 2: What changed in Evaluation Harness v2 and why does it matter?
+* **Plain Language:**
+  1. **512 Tokens:** We increased the generation ceiling from 128 to 512 tokens so the model has enough room to reason and finish its SQL block.
+  2. **Truncation Flag (`hit_token_limit`):** We now record whether a query was cut off at the limit or completed naturally, allowing us to separate real model mistakes from cut-off answers.
+  3. **6th Category (`NO_SQL_EXTRACTED`):** If the model outputs plain English conversational text without a fenced SQL block and without starting with `SELECT` or `WITH`, it is categorized as `NO_SQL_EXTRACTED` rather than pretending it was broken SQL syntax.
+  4. **Strict Precision Matching:** We added an explicit `--precision` flag (`float16` vs. `4bit`) and logged it in the JSON artifact so both base and GRPO models are evaluated under identical mathematical precision on the same GPU.
+* **Interview Talking Point:**
+  *"In our v2 evaluation harness, we disentangled format/truncation failures from SQL semantic errors. By expanding the token budget to 512, tracking token truncation flags, and introducing `NO_SQL_EXTRACTED` for non-SQL conversational completions, we ensure our benchmark measures true relational reasoning rather than prompt formatting artifacts."*
+
+### Step 3: What did the fair v2 re-evaluation reveal?
+* **Plain Language:**
+  When we gave both models 512 tokens and evaluated them on the exact same GPU in 16-bit precision:
+  1. **The base model is already quite strong at SQL:** Instead of 13.89% (15/108), the base model actually scored **58.33% (63/108)** execution accuracy! It emitted markdown fenced SQL blocks 100% of the time (108/108) once it had room to finish its thoughts.
+  2. **GRPO post-training improved accuracy from 63 to 65 (+1.85% absolute):** The GRPO post-trained model achieved **60.19% (65/108)** execution accuracy.
+  3. **Syntax errors were never the real problem:** At 512 tokens, syntax errors dropped to 1 out of 108 queries for both models! The real errors are semantic: `VALUE_MISMATCH` (23 queries where the query ran but selected the wrong rows/columns) and `SCHEMA_HALLUCINATION` (13 queries referencing non-existent columns).
+* **Interview Talking Point:**
+  *"Conducting a fair re-evaluation under identical hardware and a 512-token budget revealed the true baseline capability of Qwen2.5-Coder-1.5B (58.3% EX, 100% format adherence). The initial 13.9% baseline was an evaluation artifact caused by mid-thought truncation at 128 tokens. Under identical 16-bit evaluation, GRPO achieved 60.19% EX (+1.85% absolute, 63 -> 65 of 108), proving that honest benchmarking is essential to avoid claiming credit for format adherence that the base model already possessed."*
+
+### Step 4: What is a Paired McNemar Test and Wilson Confidence Interval?
+* **Plain Language:**
+  - **Wilson 95% Confidence Interval:** Instead of giving a single percentage (e.g. 58.3%), a confidence interval shows the range where the true accuracy lies given our sample size of 108 questions. For Base, it is [48.9%, 67.2%]; for GRPO, it is [50.8%, 68.9%]. Because these ranges overlap heavily, we cannot say one model is definitively better from raw percentages alone.
+  - **Paired McNemar's Test:** When you test two models on the exact same questions, questions where *both* succeed (63) or *both* fail (43) tell you nothing about the difference between them. You only look at the **discordant pairs**: questions where one model succeeded and the other failed. Here, Base won 0 questions ($b=0$) and GRPO won 2 questions ($c=2$). McNemar's test asks: *"If the two models were identical in ability, what is the chance of flipping a coin twice and getting 2 heads?"* The answer is $p = 0.5000$ (50%). Since $p > 0.05$, the difference is not statistically significant.
+  - **Zero Regressions ($b=0$):** Although the lift is small, the GRPO model introduced **zero regressions**—it never broke a question that the base model answered correctly.
+* **Interview Talking Point:**
+  *"In rigorous LLM evaluation, claiming victory over small percentage shifts without hypothesis testing is an amateur mistake. We implemented a paired McNemar test on the 108 test questions ($b=0, c=2, p=0.5000$) and computed Wilson 95% confidence intervals. This demonstrated that while GRPO fixed two complex relational logic bugs with zero regressions, the net +1.85% gain is within expected statistical sampling variance."*
+
+### Step 5 & 6: Why is Documentation Honesty your Biggest Interview Advantage?
+* **Plain Language:** Many candidates copy-paste inflated metrics like *"+20% accuracy boost"* or *"thousands of rollouts"*. When an experienced interviewer asks to see the code or drill down into the numbers, these claims collapse. By voluntarily diagnosing the 128-token truncation artifact, reporting exact counts (63 -> 65), showing zero regressions, and noting that public Spider schemas may exist in pre-training data, you demonstrate the scientific maturity of a senior evaluation engineer.
+* **Interview Talking Point:**
+  *"What sets this project apart is rigorous evaluation hygiene: when my initial audit revealed that a 128-token cap artificially depressed the baseline to 13.9% by cutting off chain-of-thought outputs mid-sentence, I didn't hide it. I upgraded the harness, established a 58.3% baseline, and proved that GRPO repaired relational filter bugs without regressions, all backed by committed JSON artifacts and paired statistical tests."*
+
+---
+
 ## 30-Second Interview Elevator Pitch (DP World AI/ML Track)
-> *"For this project, I post-trained `Qwen2.5-Coder-1.5B` using Group Relative Policy Optimization (GRPO) with a verifiable in-memory SQLite execution reward on multi-table logistics and container tracking schemas. I engineered a defense-in-depth sandbox with dual opcode and thread timeouts, designed a tiered composite reward function (+0.1 format, +0.2 syntax, +0.7 execution match) with anti-hacking guards, and optimized the rollout engine to train locally within 6GB VRAM. Under deterministic zero-leakage greedy decoding on 108 unseen supply-chain test questions, the GRPO post-trained model achieved a **+20.01% relative improvement in execution accuracy** (13.89% to 16.67%) and boosted valid SQL generation by **+23.82%** (19.44% to 24.07%), while our 5-class failure taxonomy demonstrated measurable reduction in conversational syntax errors."*
+> *"For this project, I post-trained `Qwen2.5-Coder-1.5B` using Group Relative Policy Optimization (GRPO) with a verifiable in-memory SQLite execution reward on multi-table shipping and order fulfillment schemas. I built a defense-in-depth sandbox with dual opcode and thread timeouts, optimized rollout memory to run locally in 6GB VRAM, and authored an automated 6-class failure taxonomy. When auditing initial evaluations, I diagnosed a 128-token truncation artifact that artificially depressed the baseline; under an authorized 512-token re-evaluation, the base model achieved 58.33% execution accuracy, while GRPO reached 60.19% (63 to 65 of 108 correct) with zero regressions ($b=0, p=0.5000$). This experience demonstrates not just post-training mechanics, but the rigorous statistical integrity essential for enterprise evaluation."*

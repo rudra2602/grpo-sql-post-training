@@ -18,6 +18,7 @@ from src.evaluate import (
     classify_failure,
     evaluate_single_prediction,
     TAXONOMY_CORRECT,
+    TAXONOMY_NO_SQL_EXTRACTED,
     TAXONOMY_SYNTAX_ERROR,
     TAXONOMY_SCHEMA_HALLUCINATION,
     TAXONOMY_TIMEOUT_ABORT,
@@ -107,6 +108,45 @@ def test_classify_value_mismatch():
     assert cat == TAXONOMY_VALUE_MISMATCH
 
 
+def test_classify_no_sql_extracted():
+    """Verify conversational text without markdown or SQL starting keywords maps to NO_SQL_EXTRACTED."""
+    # Case 1: Conversational prose without markdown
+    cat1 = classify_failure(
+        exec_success=False,
+        pred_rows=[],
+        err_msg="OperationalError: near 'Let': syntax error",
+        gold_rows=[(1,)],
+        is_match=False,
+        has_markdown=False,
+        extracted_sql="Let's walk through the question step by step...",
+    )
+    assert cat1 == TAXONOMY_NO_SQL_EXTRACTED
+
+    # Case 2: Raw SQL without markdown that starts with SELECT does NOT map to NO_SQL_EXTRACTED
+    cat2 = classify_failure(
+        exec_success=False,
+        pred_rows=[],
+        err_msg="OperationalError: near 'FORM': syntax error",
+        gold_rows=[(1,)],
+        is_match=False,
+        has_markdown=False,
+        extracted_sql="SELECT * FORM table;",
+    )
+    assert cat2 == TAXONOMY_SYNTAX_ERROR
+
+    # Case 3: Raw SQL without markdown that starts with WITH does NOT map to NO_SQL_EXTRACTED
+    cat3 = classify_failure(
+        exec_success=False,
+        pred_rows=[],
+        err_msg="OperationalError: near 'AS': syntax error",
+        gold_rows=[(1,)],
+        is_match=False,
+        has_markdown=False,
+        extracted_sql="WITH cte AS (SELECT 1) SELECT * FROM cte;",
+    )
+    assert cat3 == TAXONOMY_SYNTAX_ERROR
+
+
 def test_evaluate_single_prediction_end_to_end(temp_logistics_db: Path):
     """Verify evaluate_single_prediction works end-to-end against a real database."""
     gold_sql = "SELECT container_id FROM containers WHERE status = 'DELIVERED';"
@@ -130,3 +170,10 @@ def test_evaluate_single_prediction_end_to_end(temp_logistics_db: Path):
     res_hallu = evaluate_single_prediction(pred_hallu, gold_sql, temp_logistics_db)
     assert res_hallu["is_match"] is False
     assert res_hallu["error_category"] == TAXONOMY_SCHEMA_HALLUCINATION
+
+    # Case D: Conversational prose without markdown tag (NO_SQL_EXTRACTED)
+    pred_prose = "Let's walk through the question. We should examine the containers table..."
+    res_prose = evaluate_single_prediction(pred_prose, gold_sql, temp_logistics_db)
+    assert res_prose["is_match"] is False
+    assert res_prose["error_category"] == TAXONOMY_NO_SQL_EXTRACTED
+    assert res_prose["has_markdown"] is False

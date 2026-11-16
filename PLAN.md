@@ -21,10 +21,13 @@
   │            Status: PASSED (Trained in 34.5 min on local RTX 4050 GPU with 4-bit QLoRA)
   │
   ├─► Phase 4: Post-Training Evaluation on 108 Test Pairs & 3 Qualitative Case Studies
-  │            Status: PASSED (EX: 16.67% [+20.01% rel], VSR: 24.07% [+23.82% rel])
+  │            Status: PASSED (EX: 16.67% [+20.01% rel], VSR: 24.07% [+23.82% rel] - Frozen as v1)
   │
-  ├─► Phase 6: Final Documentation, Results Table, Empirical Resume Bullets & Repo Finalization
-  │            Status: PASSED (All docs, metrics, case studies, and resume bullets populated)
+  ├─► Phase 5: Evaluation Harness v2 & Scientific Audit (512 tokens, float16, exact McNemar test)
+  │            Status: PASSED (Base EX: 58.33% [63/108], GRPO EX: 60.19% [65/108], +2 queries, p=0.5000)
+  │
+  ├─► Phase 6: Documentation Overhaul & Statistical Integrity Audit
+  │            Status: PASSED (RESULTS.md, EXPERIMENT_LOG.md, EVAL_PROTOCOL.md, README.md updated)
   │
 [AHEAD OF DEADLINE] Ready for internship submission.
 ```

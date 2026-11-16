@@ -25,6 +25,7 @@ from src.data_loader import format_sql_prompt, load_logistics_dataset
 from src.executor import SafeSQLExecutor
 from src.reward import check_result_equivalence, extract_sql_query
 
+TAXONOMY_NO_SQL_EXTRACTED = "NO_SQL_EXTRACTED"
 TAXONOMY_SYNTAX_ERROR = "SYNTAX_ERROR"
 TAXONOMY_SCHEMA_HALLUCINATION = "SCHEMA_HALLUCINATION"
 TAXONOMY_TIMEOUT_ABORT = "TIMEOUT_ABORT"
@@ -33,6 +34,7 @@ TAXONOMY_VALUE_MISMATCH = "VALUE_MISMATCH"
 TAXONOMY_CORRECT = "CORRECT"
 
 ALL_TAXONOMY_CATEGORIES = [
+    TAXONOMY_NO_SQL_EXTRACTED,
     TAXONOMY_SYNTAX_ERROR,
     TAXONOMY_SCHEMA_HALLUCINATION,
     TAXONOMY_TIMEOUT_ABORT,
@@ -47,19 +49,28 @@ def classify_failure(
     err_msg: Optional[str],
     gold_rows: List[Tuple[Any, ...]],
     is_match: bool,
+    has_markdown: bool = True,
+    extracted_sql: str = "",
 ) -> str:
-  """Classify query execution into the 5-class deterministic failure taxonomy.
+  """Classify query execution into the 6-class deterministic failure taxonomy.
 
-  Returns TAXONOMY_CORRECT if is_match is True, otherwise one of the 5 error
+  Returns TAXONOMY_CORRECT if is_match is True, otherwise one of the 6 error
   codes:
-    1. TIMEOUT_ABORT: Execution exceeded 1.0s limit.
-    2. SCHEMA_HALLUCINATION: Reference to non-existent table or column.
-    3. SYNTAX_ERROR: SQLite parser failure or malformed query.
-    4. EMPTY_RESULT: Query returned 0 rows while gold returned data.
-    5. VALUE_MISMATCH: Clean execution with non-empty rows differing from gold.
+    1. NO_SQL_EXTRACTED: Outputs with no fenced SQL block and no query starting with SELECT/WITH.
+    2. TIMEOUT_ABORT: Execution exceeded 1.0s limit.
+    3. SCHEMA_HALLUCINATION: Reference to non-existent table or column.
+    4. SYNTAX_ERROR: SQLite parser failure or malformed query.
+    5. EMPTY_RESULT: Query returned 0 rows while gold returned data.
+    6. VALUE_MISMATCH: Clean execution with non-empty rows differing from gold.
   """
   if is_match:
     return TAXONOMY_CORRECT
+
+  # Check if SQL was extracted: either has markdown fenced block, or query starts with SELECT/WITH
+  cleaned_sql = (extracted_sql or "").strip().upper()
+  starts_with_sql = cleaned_sql.startswith("SELECT") or cleaned_sql.startswith("WITH")
+  if not has_markdown and not starts_with_sql:
+    return TAXONOMY_NO_SQL_EXTRACTED
 
   err_lower = (err_msg or "").lower()
 
@@ -108,6 +119,8 @@ def evaluate_single_prediction(
       err_msg=pred_err,
       gold_rows=gold_rows,
       is_match=is_match,
+      has_markdown=has_markdown,
+      extracted_sql=pred_sql,
   )
 
   return {
@@ -128,7 +141,7 @@ def run_evaluation(
     tokenizer: Any,
     dataset: List[Dict[str, Any]],
     device: str = "cpu",
-    max_new_tokens: int = 128,
+    max_new_tokens: int = 512,
 ) -> Dict[str, Any]:
   """Run greedy decoding evaluation across a dataset split."""
   results: List[Dict[str, Any]] = []
@@ -179,6 +192,8 @@ def run_evaluation(
     # Slice off input tokens to get completion only
     input_len = inputs["input_ids"].shape[1]
     completion_tokens = outputs[0][input_len:]
+    generated_tokens = int(len(completion_tokens))
+    hit_token_limit = bool(generated_tokens >= max_new_tokens)
     completion_text = tokenizer.decode(
         completion_tokens, skip_special_tokens=True
     ).strip()
@@ -190,6 +205,8 @@ def run_evaluation(
         "question": record["question"],
         "gold_sql": gold_sql,
         "difficulty": difficulty,
+        "generated_tokens": generated_tokens,
+        "hit_token_limit": hit_token_limit,
     })
     results.append(eval_result)
 
@@ -215,6 +232,10 @@ def run_evaluation(
       else 0.0
   )
 
+  hit_limit_count = sum(1 for r in results if r.get("hit_token_limit", False))
+  total_gen_tokens = sum(r.get("generated_tokens", 0) for r in results)
+  avg_gen_tokens = (total_gen_tokens / total_queries) if total_queries > 0 else 0.0
+
   summary = {
       "timestamp": datetime.now(timezone.utc).isoformat(),
       "total_queries": total_queries,
@@ -227,6 +248,11 @@ def run_evaluation(
           "correct": correct_count,
           "valid_sql": valid_sql_count,
           "format_adherent": format_adherent_count,
+      },
+      "token_stats": {
+          "total_hit_token_limit": hit_limit_count,
+          "hit_token_limit_pct": round((hit_limit_count / total_queries) * 100.0, 2) if total_queries > 0 else 0.0,
+          "avg_generated_tokens": round(avg_gen_tokens, 2),
       },
       "failure_taxonomy": taxonomy_counts,
       "per_database": per_db_accuracy,
@@ -244,14 +270,20 @@ def print_evaluation_summary(summary: Dict[str, Any]) -> None:
   total = summary["total_queries"]
 
   print("\n" + "=" * 60)
-  print("EVALUATION RESULTS SUMMARY")
+  print("EVALUATION RESULTS SUMMARY (Harness v2)")
   print("=" * 60)
   print(f"Total Evaluated Questions: {total}")
+  print(f"Precision Setting:         {summary.get('precision', 'unknown')}")
+  print(f"Max New Tokens:            {summary.get('max_new_tokens', 512)}")
+  if "token_stats" in summary:
+    ts = summary["token_stats"]
+    print(f"Hit Token Limit:           {ts['total_hit_token_limit']}/{total} ({ts['hit_token_limit_pct']}%)")
+    print(f"Avg Generated Tokens:      {ts['avg_generated_tokens']}")
   print(f"Execution Accuracy (EX):   {m['execution_accuracy_pct']:.2f}% ({c['correct']}/{total})")
   print(f"Valid SQL Rate (VSR):       {m['valid_sql_rate_pct']:.2f}% ({c['valid_sql']}/{total})")
   print(f"Format Adherence Rate (FAR):{m['format_adherence_rate_pct']:.2f}% ({c['format_adherent']}/{total})")
 
-  print("\n5-CLASS FAILURE TAXONOMY BREAKDOWN:")
+  print("\n6-CLASS FAILURE TAXONOMY BREAKDOWN:")
   print("-" * 50)
   for cat, count in tax.items():
     pct = (count / total) * 100.0 if total > 0 else 0.0
@@ -307,8 +339,15 @@ def parse_args() -> argparse.Namespace:
   parser.add_argument(
       "--max_new_tokens",
       type=int,
-      default=128,
+      default=512,
       help="Max generation tokens.",
+  )
+  parser.add_argument(
+      "--precision",
+      type=str,
+      default="float16",
+      choices=["float16", "bfloat16", "4bit", "float32"],
+      help="Inference precision/quantization setting ('float16', 'bfloat16', '4bit', or 'float32').",
   )
   return parser.parse_args()
 
@@ -339,12 +378,14 @@ def main() -> None:
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
   print("=" * 60)
-  print("STARTING EVALUATION RUN")
-  print(f"Model:        {args.model_path}")
-  print(f"Adapter:      {args.adapter_path or 'None (Zero-Shot Base)'}")
-  print(f"Split:        {args.split}")
-  print(f"Device:       {device}")
-  print(f"Output File:  {args.output_file}")
+  print("STARTING EVALUATION RUN (Harness v2)")
+  print(f"Model:          {args.model_path}")
+  print(f"Adapter:        {args.adapter_path or 'None (Zero-Shot Base)'}")
+  print(f"Split:          {args.split}")
+  print(f"Device:         {device}")
+  print(f"Precision:      {args.precision}")
+  print(f"Max New Tokens: {args.max_new_tokens}")
+  print(f"Output File:    {args.output_file}")
   print("=" * 60)
 
   # Load Dataset
@@ -356,14 +397,37 @@ def main() -> None:
   tokenizer = AutoTokenizer.from_pretrained(
       args.model_path, trust_remote_code=True
   )
-  torch_dtype = torch.float16 if device == "cuda" else torch.float32
 
-  model = AutoModelForCausalLM.from_pretrained(
-      args.model_path,
-      torch_dtype=torch_dtype,
-      device_map="auto" if device == "cuda" else None,
-      trust_remote_code=True,
-  )
+  if args.precision == "4bit":
+    from transformers import BitsAndBytesConfig
+    compute_dtype = torch.bfloat16 if (torch.cuda.is_available() and torch.cuda.is_bf16_supported()) else torch.float16
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=compute_dtype,
+        bnb_4bit_use_double_quant=True,
+    )
+    print("Loading base model in 4-bit NF4 quantization...")
+    model = AutoModelForCausalLM.from_pretrained(
+        args.model_path,
+        quantization_config=bnb_config,
+        device_map="auto" if device == "cuda" else None,
+        trust_remote_code=True,
+    )
+  else:
+    dtype_map = {
+        "float16": torch.float16,
+        "bfloat16": torch.bfloat16,
+        "float32": torch.float32,
+    }
+    torch_dtype = dtype_map.get(args.precision, torch.float16 if device == "cuda" else torch.float32)
+    print(f"Loading base model in {args.precision} ({torch_dtype})...")
+    model = AutoModelForCausalLM.from_pretrained(
+        args.model_path,
+        torch_dtype=torch_dtype,
+        device_map="auto" if device == "cuda" else None,
+        trust_remote_code=True,
+    )
 
   if args.adapter_path:
     print(f"Loading LoRA adapter from {args.adapter_path}...")
@@ -371,7 +435,7 @@ def main() -> None:
 
     model = PeftModel.from_pretrained(model, args.adapter_path)
 
-  if device != "cuda":
+  if device != "cuda" and args.precision != "4bit":
     model.to(device)
 
   model.eval()
@@ -387,6 +451,9 @@ def main() -> None:
   summary["model_path"] = args.model_path
   summary["adapter_path"] = args.adapter_path
   summary["split"] = args.split
+  summary["precision"] = args.precision
+  summary["max_new_tokens"] = args.max_new_tokens
+  summary["harness_version"] = "v2"
 
   # Save artifact
   out_path = Path(args.output_file)

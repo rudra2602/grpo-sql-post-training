@@ -12,19 +12,21 @@ The project specifically evaluates post-training gains on multi-table **logistic
 
 ---
 
-## Benchmark Results (Cross-Database Held-Out Test Set)
+## Benchmark Results (Cross-Database Held-Out Test Set - Harness v2)
 
-Evaluated on `data/test_logistics.json` (108 held-out questions on strictly unseen logistics and shipping database schemas: `tracking_orders` and `ship_1`) under **deterministic greedy decoding ($T=0.0$)**, hard 1.0s sandbox timeout, and multiset row matching.
+Evaluated on `data/test_logistics.json` (108 held-out questions on strictly unseen Spider schemas: `ship_1` and `tracking_orders`) under **deterministic greedy decoding ($T=0.0$)**, `max_new_tokens=512`, 16-bit (`float16`) precision on an NVIDIA GeForce RTX 4050 Laptop GPU, hard 1.0s sandbox timeout, and multiset row matching.
 
-| Metric | Base Model (`Qwen2.5-Coder-1.5B-Instruct`) | Post-Trained Model (GRPO LoRA) | Absolute Delta ($\Delta$) | Relative Improvement (%) |
-|---|---|---|---|---|
-| **Execution Accuracy (EX %)** | **13.89 %** (15/108) | **16.67 %** (18/108) | **+2.78 %** | **+20.01 %** |
-| **Valid SQL Rate (VSR %)** | **19.44 %** (21/108) | **24.07 %** (26/108) | **+4.63 %** | **+23.82 %** |
-| **Format Adherence Rate (FAR %)** | **19.44 %** (21/108) | **24.07 %** (26/108) | **+4.63 %** | **+23.82 %** |
+| Metric | Base Model (`Qwen2.5-Coder-1.5B-Instruct`) | Post-Trained Model (GRPO LoRA Adapter) | Absolute Delta ($\Delta$) | Wilson 95% Confidence Intervals | Statistical Significance |
+|---|---|---|---|---|---|
+| **Execution Accuracy (EX %)** | **58.33 %** (63 / 108) | **60.19 %** (65 / 108) | **+1.85 %** (+2 queries) | Base: [48.9%, 67.2%]<br>GRPO: [50.8%, 68.9%] | $p = 0.5000$ (McNemar exact; within noise) |
+| **Valid SQL Rate (VSR %)** | **87.04 %** (94 / 108) | **87.04 %** (94 / 108) | **0.00 %** (exact parity) | Base: [79.4%, 92.1%]<br>GRPO: [79.4%, 92.1%] | Identical valid SQL rates |
+| **Format Adherence Rate (FAR %)** | **100.00 %** (108 / 108) | **100.00 %** (108 / 108) | **0.00 %** (exact parity) | Base: [96.6%, 100.0%]<br>GRPO: [96.6%, 100.0%] | Identical format adherence |
 
-* **Maritime Domain (`ship_1`):** Execution accuracy improved from **22.92%** to **27.08%** (+18.2% relative).
-* **Order Fulfillment (`tracking_orders`):** Execution accuracy improved from **6.67%** to **8.33%** (+25.0% relative).
-* **Automated Failure Taxonomy:** Reduced syntax errors from **80.6%** (87/108) down to **75.9%** (82/108) by suppressing conversational chain-of-thought rambling and enforcing structured markdown SQL output.
+* **Maritime Domain (`ship_1`):** Execution accuracy improved from **50.00%** (24/48) to **54.17%** (26/48) (+2 queries).
+* **Order Fulfillment (`tracking_orders`):** Execution accuracy was **65.00%** (39/60) for both models (0 delta across all 60 queries).
+* **Paired Contingency Analysis:** 63 queries were solved by both models; 2 queries were flipped from incorrect to correct by GRPO; **0 regressions occurred** (no question solved by Base was missed by GRPO). The exact two-sided McNemar test yields $p = 0.5000$, indicating that the +2 query gain is within expected sampling variance.
+* **Pre-Training Data Caveat:** Because Spider schemas are public, query patterns and table structures may be present in the pre-training data of `Qwen2.5-Coder-1.5B-Instruct`, accounting for the strong baseline performance.
+* **Automated Failure Taxonomy:** Real errors are semantic rather than syntactic: `VALUE_MISMATCH` (21.3%) and `SCHEMA_HALLUCINATION` (12.0%), while `SYNTAX_ERROR` was only 0.9% (1 query) for both models.
 
 ---
 
@@ -81,22 +83,29 @@ Prompt: (Schema DDL + Question)
 │   ├── executor.py            # Safe in-memory SQLite sandbox & timeout handler
 │   ├── reward.py              # Tiered composite reward & anti-hacking checks
 │   ├── data_loader.py         # Prompt formatting & schema injection
-│   ├── evaluate.py            # Deterministic greedy decoding & 5-class failure taxonomy
+│   ├── evaluate.py            # Deterministic greedy decoding & 6-class failure taxonomy (Harness v2)
+│   ├── statistics.py          # Wilson score CIs and exact McNemar hypothesis testing
 │   └── train_grpo.py          # TRL GRPOTrainer script (with 6GB VRAM memory safeguards)
 ├── tests/
 │   ├── conftest.py            # Shared in-memory SQLite fixtures and sample schemas
 │   ├── test_executor.py       # Unit tests: enforces read-only, blocks mutations, enforces timeout
 │   ├── test_reward.py         # Unit tests: verifies format, syntax, execution, and anti-hacking
-│   └── test_leakage.py        # Unit tests: asserts 0 database/schema overlap between train and test
+│   ├── test_leakage.py        # Unit tests: asserts 0 database/schema overlap between train and test
+│   ├── test_evaluate.py       # Unit tests: 6-class failure taxonomy and token truncation checks
+│   └── test_statistics.py     # Unit tests: Wilson score intervals and McNemar binomial probabilities
 ├── notebooks/
 │   └── colab_train.ipynb      # Standalone Colab runner
+├── scripts/
+│   ├── compare_evals.py       # Compares evaluation runs, computes CIs and McNemar test
+│   └── prepare_data.py        # Data curation and schema validation pipeline
 ├── docs/
 │   ├── RESULTS.md             # Full experimental metrics, deltas, and qualitative case studies
 │   ├── EXPERIMENT_LOG.md      # Detailed logs of all baseline and post-training runs
 │   ├── LEARNING_NOTES.md      # Technical deep-dives & interview handbook for DP World ML track
 │   ├── DECISIONS.md           # Architectural decision records
 │   ├── REWARD_DESIGN.md       # Reward function mathematical formulation
-│   └── EVAL_PROTOCOL.md       # Evaluation protocol and zero-leakage guidelines
+│   ├── EVAL_PROTOCOL.md       # Evaluation protocol and zero-leakage guidelines
+│   └── reviews/               # Archived stage 5-9 review audits and reports
 ├── PLAN.md                    # Project roadmap and definition of done
 └── AGENTS.md                  # Autonomous agent directives and engineering constraints
 ```
@@ -109,17 +118,17 @@ Prompt: (Schema DDL + Question)
 # 1. Activate conda environment
 conda activate grpo-sql
 
-# 2. Run unit tests (39/39 passing)
+# 2. Run unit tests (42/42 passing)
 pytest tests/ -v
 
-# 3. Run baseline zero-shot evaluation
-python src/evaluate.py --model_path Qwen/Qwen2.5-Coder-1.5B-Instruct --split test --output_file docs/baseline_eval.json
+# 3. Run baseline evaluation under Harness v2 (512 tokens, float16)
+python src/evaluate.py --model_path Qwen/Qwen2.5-Coder-1.5B-Instruct --split test --precision float16 --max_new_tokens 512 --output_file docs/eval_v2_base.json
 
-# 4. Launch GRPO post-training run (Runs locally on consumer GPU or Colab)
-python src/train_grpo.py --model_name Qwen/Qwen2.5-Coder-1.5B-Instruct --max_steps 30 --group_size 4 --lr 1e-5 --save_steps 10 --output_dir checkpoints/grpo_final
+# 4. Evaluate GRPO post-trained model under Harness v2 (512 tokens, float16)
+python src/evaluate.py --model_path Qwen/Qwen2.5-Coder-1.5B-Instruct --adapter_path checkpoints/grpo_final --split test --precision float16 --max_new_tokens 512 --output_file docs/eval_v2_grpo.json
 
-# 5. Evaluate GRPO post-trained model
-python src/evaluate.py --model_path Qwen/Qwen2.5-Coder-1.5B-Instruct --adapter_path checkpoints/grpo_final --split test --output_file docs/grpo_eval.json
+# 5. Generate comparative statistical report (Wilson CIs, McNemar exact p-value)
+python scripts/compare_evals.py
 ```
 
 ---

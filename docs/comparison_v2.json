@@ -1,0 +1,154 @@
+{
+  "metadata": {
+    "base_model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+    "grpo_adapter": "checkpoints/grpo_final",
+    "precision": "float16",
+    "max_new_tokens": 512,
+    "total_queries": 108
+  },
+  "base_model": {
+    "execution_accuracy": {
+      "count": 63,
+      "total": 108,
+      "pct": 58.33,
+      "wilson_ci_95": [
+        48.91,
+        67.19
+      ]
+    },
+    "valid_sql_rate": {
+      "count": 94,
+      "total": 108,
+      "pct": 87.04,
+      "wilson_ci_95": [
+        79.41,
+        92.12
+      ]
+    },
+    "format_adherence_rate": {
+      "count": 108,
+      "total": 108,
+      "pct": 100.0,
+      "wilson_ci_95": [
+        96.57,
+        100.0
+      ]
+    },
+    "conditional_accuracy_on_emitted_sql": {
+      "correct": 63,
+      "emitted": 108,
+      "pct": 58.33
+    },
+    "token_stats": {
+      "total_hit_token_limit": 1,
+      "hit_token_limit_pct": 0.93,
+      "avg_generated_tokens": 246.0
+    },
+    "failure_taxonomy": {
+      "NO_SQL_EXTRACTED": 0,
+      "SYNTAX_ERROR": 1,
+      "SCHEMA_HALLUCINATION": 13,
+      "TIMEOUT_ABORT": 0,
+      "EMPTY_RESULT": 8,
+      "VALUE_MISMATCH": 23
+    },
+    "per_database": {
+      "ship_1": {
+        "total": 48,
+        "correct": 24
+      },
+      "tracking_orders": {
+        "total": 60,
+        "correct": 39
+      }
+    }
+  },
+  "grpo_model": {
+    "execution_accuracy": {
+      "count": 65,
+      "total": 108,
+      "pct": 60.19,
+      "wilson_ci_95": [
+        50.76,
+        68.91
+      ]
+    },
+    "valid_sql_rate": {
+      "count": 94,
+      "total": 108,
+      "pct": 87.04,
+      "wilson_ci_95": [
+        79.41,
+        92.12
+      ]
+    },
+    "format_adherence_rate": {
+      "count": 108,
+      "total": 108,
+      "pct": 100.0,
+      "wilson_ci_95": [
+        96.57,
+        100.0
+      ]
+    },
+    "conditional_accuracy_on_emitted_sql": {
+      "correct": 65,
+      "emitted": 108,
+      "pct": 60.19
+    },
+    "token_stats": {
+      "total_hit_token_limit": 2,
+      "hit_token_limit_pct": 1.85,
+      "avg_generated_tokens": 238.9
+    },
+    "failure_taxonomy": {
+      "NO_SQL_EXTRACTED": 0,
+      "SYNTAX_ERROR": 1,
+      "SCHEMA_HALLUCINATION": 13,
+      "TIMEOUT_ABORT": 0,
+      "EMPTY_RESULT": 6,
+      "VALUE_MISMATCH": 23
+    },
+    "per_database": {
+      "ship_1": {
+        "total": 48,
+        "correct": 26
+      },
+      "tracking_orders": {
+        "total": 60,
+        "correct": 39
+      }
+    }
+  },
+  "paired_analysis": {
+    "contingency_matrix": {
+      "both_correct": 63,
+      "only_base_correct_b": 0,
+      "only_grpo_correct_c": 2,
+      "neither_correct": 43,
+      "total": 108
+    },
+    "mcnemar_test": {
+      "discordant_pairs": 2,
+      "b_base_better": 0,
+      "c_grpo_better": 2,
+      "net_shift": 2,
+      "exact_two_sided_p_value": 0.5,
+      "is_statistically_significant_005": false
+    },
+    "per_database_paired": {
+      "ship_1": {
+        "both_correct": 24,
+        "only_base_correct": 0,
+        "only_grpo_correct": 2,
+        "neither_correct": 22
+      },
+      "tracking_orders": {
+        "both_correct": 39,
+        "only_base_correct": 0,
+        "only_grpo_correct": 0,
+        "neither_correct": 21
+      }
+    }
+  }
+}

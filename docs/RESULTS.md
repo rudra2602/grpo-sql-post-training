@@ -1,120 +1,136 @@
-# Experimental Results & Performance Analysis
+# Experimental Results & Performance Analysis (Evaluation Harness v2)
 
-> **Strict Honesty & Integrity Protocol:**  
-> All metrics, counts, and deltas in this report are verified, real measured values from completed benchmark evaluation runs on `data/test_logistics.json`. Zero numbers were fabricated or estimated.
+> **Strict Honesty & Scientific Integrity Protocol:**  
+> All metrics, counts, confidence intervals, and statistical tests in this report are verified, real measured values from completed benchmark evaluation runs on `data/test_logistics.json` saved in `docs/eval_v2_base.json`, `docs/eval_v2_grpo.json`, and `docs/comparison_v2.json`. Zero numbers were fabricated, estimated, or extrapolated.
 
 ---
 
 ## 1. Primary Benchmark Results
 
-Evaluated on `data/test_logistics.json` (108 held-out questions on unseen logistics and shipping database schemas: `tracking_orders` and `ship_1`) using **deterministic greedy decoding ($T=0.0$)**, hard 1.0s sandbox timeout, and multiset row matching.
+Evaluated on `data/test_logistics.json` (108 held-out test questions across Spider schemas `ship_1` and `tracking_orders`) on an **NVIDIA GeForce RTX 4050 Laptop GPU** in **16-bit (`float16`) precision** using **deterministic greedy decoding ($T=0.0$, `do_sample=False`)**, `max_new_tokens = 512`, hard 1.0s sandbox timeout, and multiset row matching.
 
-| Metric | Base Model (`Qwen2.5-Coder-1.5B-Instruct`) | Post-Trained Model (GRPO LoRA) | Absolute Delta ($\Delta$) | Relative Improvement (%) |
-|---|---|---|---|---|
-| **Execution Accuracy (EX %)** | **13.89 %** (15/108) | **16.67 %** (18/108) | **+2.78 %** | **+20.01 %** |
-| **Valid SQL Rate (VSR %)** | **19.44 %** (21/108) | **24.07 %** (26/108) | **+4.63 %** | **+23.82 %** |
-| **Format Adherence Rate (FAR %)** | **19.44 %** (21/108) | **24.07 %** (26/108) | **+4.63 %** | **+23.82 %** |
+| Metric | Base Model (`Qwen2.5-Coder-1.5B-Instruct`) | Post-Trained Model (GRPO LoRA Adapter) | Absolute Delta ($\Delta$) | Wilson 95% Confidence Intervals | Statistical Significance |
+|---|---|---|---|---|---|
+| **Execution Accuracy (EX %)** | **58.33 %** (63 / 108) | **60.19 %** (65 / 108) | **+1.85 %** (+2 queries) | Base: [48.9%, 67.2%]<br>GRPO: [50.8%, 68.9%] | $p = 0.5000$ (McNemar exact; within noise) |
+| **Valid SQL Rate (VSR %)** | **87.04 %** (94 / 108) | **87.04 %** (94 / 108) | **0.00 %** (exact parity) | Base: [79.4%, 92.1%]<br>GRPO: [79.4%, 92.1%] | Identical valid SQL rates |
+| **Format Adherence Rate (FAR %)** | **100.00 %** (108 / 108) | **100.00 %** (108 / 108) | **0.00 %** (exact parity) | Base: [96.6%, 100.0%]<br>GRPO: [96.6%, 100.0%] | Identical format adherence |
+
+### Generation & Token Limit Profile
+* **Average Completion Length:** 246.0 tokens (Base) vs. 238.9 tokens (GRPO).
+* **Token Limit Truncation ($\ge 512$ tokens):** 1 / 108 (0.93%) for Base vs. 2 / 108 (1.85%) for GRPO.
+* **Accuracy Conditional on Emitted SQL:** 58.33% (Base: 63/108) vs. 60.19% (GRPO: 65/108), as both models emitted markdown SQL blocks for 100% of test prompts.
 
 ### Per-Database Performance
 * **`ship_1` (Maritime vessels & captains, 48 test questions):**
-  * Base Model: **22.92 %** (11/48 correct)
-  * GRPO Model: **27.08 %** (13/48 correct) -> **+4.16 % absolute gain** (+18.2% relative)
+  * Base Model: **50.00 %** (24 / 48 correct)
+  * GRPO Model: **54.17 %** (26 / 48 correct) $\to$ **+4.17 % absolute gain** (+2 queries)
 * **`tracking_orders` (Shipment fulfillment & orders, 60 test questions):**
-  * Base Model: **6.67 %** (4/60 correct)
-  * GRPO Model: **8.33 %** (5/60 correct) -> **+1.66 % absolute gain** (+25.0% relative)
+  * Base Model: **65.00 %** (39 / 60 correct)
+  * GRPO Model: **65.00 %** (39 / 60 correct) $\to$ **0.00 % delta** (exact parity across all 60 questions)
 
 ---
 
-## 2. Automated 5-Class Failure Taxonomy Comparison
+## 2. Automated 6-Class Failure Taxonomy Breakdown
 
 Breakdown of error causes across all failed queries on the 108 held-out test questions:
 
-| Failure Taxonomy Category | Base Model Error Count | GRPO Model Error Count | Absolute Reduction | Category Notes |
+| Failure Taxonomy Category | Base Model Error Count | GRPO Model Error Count | Shift | Category Diagnosis |
 |---|---|---|---|---|
-| `SYNTAX_ERROR` | **87** (80.56%) | **82** (75.93%) | **-5** | Malformed SQL, unclosed quotes, conversational preamble |
-| `SCHEMA_HALLUCINATION` | **0** (0.00%) | **0** (0.00%) | **0** | Hallucinated non-existent tables or columns |
-| `TIMEOUT_ABORT` | **0** (0.00%) | **0** (0.00%) | **0** | Runaway cartesian joins exceeding 1.0s sandbox limit |
-| `EMPTY_RESULT` | **0** (0.00%) | **0** (0.00%) | **0** | Over-filtered queries returning 0 rows unexpectedly |
-| `VALUE_MISMATCH` | **6** (5.56%) | **8** (7.41%) | **+2** | Executed cleanly, but row values or projections differed from gold multiset |
-| **Total Failures** | **93 / 108** (86.11%) | **90 / 108** (83.33%) | **-3** | Total incorrect queries |
+| `NO_SQL_EXTRACTED` | **0** (0.0%) | **0** (0.0%) | **0** | Conversational prose with no fenced SQL and no SQL starting keyword |
+| `SYNTAX_ERROR` | **1** (0.9%) | **1** (0.9%) | **0** | Malformed SQLite syntax or parser failure |
+| `SCHEMA_HALLUCINATION` | **13** (12.0%) | **13** (12.0%) | **0** | References to non-existent tables or columns in the schema |
+| `TIMEOUT_ABORT` | **0** (0.0%) | **0** (0.0%) | **0** | Runaway executions exceeding the 1.0s sandbox limit |
+| `EMPTY_RESULT` | **8** (7.4%) | **6** (5.6%) | **-2** | Logically over-constrained queries returning 0 rows against non-empty ground truth |
+| `VALUE_MISMATCH` | **23** (21.3%) | **23** (21.3%) | **0** | Executed cleanly, but row values or column projections differed from gold multiset |
+| **Total Failures** | **45 / 108** (41.67%) | **43 / 108** (39.81%) | **-2** | Net reduction of 2 failed queries |
 
 > [!NOTE]
-> **Key Finding on `VALUE_MISMATCH` Increase:**
-> The increase in `VALUE_MISMATCH` from 6 to 8 is a direct positive symptom of syntax repair. Two queries that previously failed with `SYNTAX_ERROR` due to conversational rambling now executed cleanly in SQLite, but their column projection order differed from the gold query (e.g., `SELECT Rank, COUNT(*)` instead of `SELECT COUNT(*), Rank`), confirming that the policy successfully learned SQL syntax and execution semantics.
+> **Key Finding on Failure Causes:**
+> At 512 tokens, `SYNTAX_ERROR` accounts for only **0.9%** (1 query) of outcomes for both models. The pre-trained base model already has high SQL syntax capability. The real failure modes are semantic: **`VALUE_MISMATCH` (21.3%)** (e.g., incorrect filter thresholds or projection ordering) and **`SCHEMA_HALLUCINATION` (12.0%)** (referencing non-existent columns).
 
 ---
 
-## 3. Qualitative Case Studies (Base vs. GRPO)
+## 3. Paired 2x2 Contingency Matrix & Statistical Significance
 
-### Case 1: Eliminating Conversational Rambling & Format Adherence (Index 40)
+Because both models were evaluated greedily ($T=0.0$) on the exact same 108 test questions on identical hardware, we performed a paired contingency analysis:
+
+| Contingency Outcome | Count | Percentage | Description |
+|---|---|---|---|
+| **Both Models Correct** | **63** | 58.33 % | Identical correct outputs on identical questions |
+| **Only Base Correct ($b$)** | **0** | 0.00 % | Regressions introduced by GRPO post-training |
+| **Only GRPO Correct ($c$)** | **2** | 1.85 % | Queries repaired by GRPO post-training |
+| **Neither Model Correct** | **43** | 39.81 % | Queries failed by both models |
+| **Total Evaluated** | **108** | 100.00 % | Total held-out test questions |
+
+### Statistical Test (Exact McNemar's Test):
+* **Discordant Pairs ($b + c$):** 2 queries (Index 40 and Index 42).
+* **Discordance Asymmetry:** $b = 0$, $c = 2$.
+* **Exact Two-Sided McNemar $p$-value:**
+  $$p = 2 \times \binom{2}{0} (0.5)^2 = 0.5000$$
+* **Conclusion:** Because $p = 0.5000 > 0.05$ and the Wilson 95% confidence intervals overlap heavily ([48.9%, 67.2%] vs. [50.8%, 68.9%]), **the +1.85% net gain cannot be claimed as statistically significant**. It is within expected sampling noise for a 108-question test set. However, the GRPO model achieved this gain with zero regressions ($b = 0$).
+
+---
+
+## 4. Deep-Dive: The Two Shifted Queries (Index 40 and Index 42)
+
+The 2 queries where GRPO successfully corrected base model errors both flipped from `EMPTY_RESULT` to exact execution match:
+
+### Shift 1: Subquery Negation vs. Invalid Inner Join on Null (Index 40)
 * **Database:** `ship_1` (Maritime vessels)
 * **Question:** *"what are the names and classes of the ships that do not have any captain yet?"*
 * **Gold SQL:**
   ```sql
   SELECT name , CLASS FROM ship WHERE ship_id NOT IN (SELECT ship_id FROM captain)
   ```
-* **Base Model Output (Failed with SYNTAX_ERROR):**
-  ```text
-  Let's walk through the question and the database.
-  To answer this question, we need to find the ships that do not have any captains associated with them...
+* **Base Model Output (Failed with `EMPTY_RESULT`):**
+  ```sql
+  SELECT T1.Name , T1.Class FROM Ship AS T1 INNER JOIN Captain AS T2 ON T1.Ship_ID = T2.Ship_ID WHERE T2.Captain_ID IS NULL
   ```
-  * *Failure Mode Diagnosed:* The base instruction-tuned model emitted conversational chain-of-thought preamble before generating markdown tags, causing SQLite syntax errors when executed.
+  * *Failure Diagnosis:* The base model performed an `INNER JOIN` between `Ship` and `Captain`, then checked `WHERE T2.Captain_ID IS NULL`. Because inner joins discard unmatched rows, the result was 0 rows.
 * **GRPO Model Output (Correct - 1.0 Reward):**
   ```sql
-  SELECT Name, Class FROM Ship WHERE Ship_ID NOT IN (SELECT Ship_ID FROM Captain);
+  SELECT Name, Class FROM Ship WHERE Ship_ID NOT IN (SELECT Ship_ID FROM Captain)
   ```
-  * *Analysis:* Under GRPO reward pressure (+0.1 format, +0.2 syntax, +0.7 execution match), the policy suppressed chain-of-thought preambles, directly outputting the nested subquery that matched gold execution.
+  * *Analysis:* The policy formulated an uncorrelated `NOT IN` subquery that correctly handled unassigned relationships, returning the exact gold multiset.
 
 ---
 
-### Case 2: Correlated Subquery vs. Explicit Join (Index 64)
-* **Database:** `tracking_orders` (Supply Chain Order Tracking)
-* **Question:** *"Give me a list of id and status of orders which belong to the customer named 'Jeramie'."*
+### Shift 2: Order By Limit vs. Impossible Minimum Comparison (Index 42)
+* **Database:** `ship_1` (Maritime vessels)
+* **Question:** *"Find the name of the ship that is steered by the youngest captain."*
 * **Gold SQL:**
   ```sql
-  SELECT T2.order_id , T2.order_status
-  FROM customers AS T1 JOIN orders AS T2 ON T1.customer_id = T2.customer_id
-  WHERE T1.customer_name = "Jeramie"
+  SELECT t1.name FROM ship AS t1 JOIN captain AS t2 ON t1.ship_id = t2.ship_id ORDER BY t2.age LIMIT 1
   ```
+* **Base Model Output (Failed with `EMPTY_RESULT`):**
+  ```sql
+  SELECT T2.Name FROM captain AS T1 INNER JOIN ship AS T2 ON T1.Ship_ID = T2.Ship_ID WHERE T1.age < (SELECT MIN(age) FROM captain);
+  ```
+  * *Failure Diagnosis:* The base model wrote `WHERE age < MIN(age)`. Because no value can be strictly less than the minimum value in the table, the query returned 0 rows.
 * **GRPO Model Output (Correct - 1.0 Reward):**
   ```sql
-  SELECT order_id, order_status
-  FROM Orders
-  WHERE customer_id = (SELECT customer_id FROM Customers WHERE customer_name = 'Jeramie');
+  SELECT T2.Name FROM captain AS T1 JOIN Ship AS T2 ON T1.Ship_ID = T2.Ship_ID ORDER BY T1.age ASC LIMIT 1
   ```
-  * *Analysis:* Demonstrates why **execution rewards outperform string-matching (BLEU/Exact Match)**. The GRPO model formulated a mathematically equivalent correlated subquery rather than an explicit `INNER JOIN`. String matching would have scored this 0, but verifiable SQLite execution confirmed identical row multisets, awarding full execution credit.
+  * *Analysis:* The policy formulated `ORDER BY age ASC LIMIT 1`, perfectly resolving the extreme value query.
 
 ---
 
-### Case 3: Complex Multi-Table Join & Group-By Filtering (Index 100)
-* **Database:** `tracking_orders` (Supply Chain Order Tracking)
-* **Question:** *"For each customer who has at least two orders, find the customer name and number of orders made."*
-* **Gold SQL:**
-  ```sql
-  SELECT T2.customer_name , count(*)
-  FROM orders AS T1 JOIN customers AS T2 ON T1.customer_id = T2.customer_id
-  GROUP BY T2.customer_id
-  HAVING count(*) >= 2
-  ```
-* **GRPO Model Output (Correct - 1.0 Reward):**
-  ```sql
-  SELECT c.customer_name, COUNT(o.order_id) AS num_orders
-  FROM Customers c
-  JOIN Orders o ON c.customer_id = o.customer_id
-  GROUP BY c.customer_id
-  HAVING COUNT(o.order_id) >= 2;
-  ```
-  * *Analysis:* Correctly identified table relationships across `Customers` and `Orders`, assigned table aliases, applied `GROUP BY c.customer_id`, and structured the `HAVING` condition.
+## 5. Verified Numbers Table (Honest Resume Reference)
 
----
+The following table provides verified, unexaggerated metrics for documentation and technical interviews:
 
-## 4. Resume Bullet Templates (For DP World Application)
-
-* **Bullet 1 (Core RL Post-Training Achievement):**  
-  > Post-trained `Qwen2.5-Coder-1.5B` using Group Relative Policy Optimization (GRPO) with verifiable in-memory SQLite execution rewards, boosting cross-database execution accuracy from **13.89%** to **16.67%** (**+20.01%** relative gain) and valid SQL generation from **19.44%** to **24.07%** on complex supply chain schemas.
-
-* **Bullet 2 (Reward Design & Security Engineering):**  
-  > Designed a tiered composite reward function (+0.1 markdown format, +0.2 syntax check, +0.7 execution match) with anti-hacking guards against trivial scalar and empty result exploitation, executing thousands of RL rollouts inside a zero-mutation, progress-monitored in-memory SQLite sandbox.
-
-* **Bullet 3 (Rigorous Evaluation & Failure Diagnostics):**  
-  > Formulated an automated 5-class failure taxonomy across 108 held-out test schemas under zero-leakage greedy decoding ($T=0.0$), diagnosing and demonstrating that GRPO reduced conversational preamble syntax errors from **80.6%** to **75.9%** while improving cross-schema generalization on unseen logistics databases.
+| Parameter | Base Model | GRPO Post-Trained Model | Delta / Shift |
+|---|---|---|---|
+| **Base Model Backbone** | `Qwen/Qwen2.5-Coder-1.5B-Instruct` | `Qwen/Qwen2.5-Coder-1.5B-Instruct` | Same architecture |
+| **Evaluation Precision** | 16-bit (`float16`) | 16-bit (`float16`) | Identical |
+| **Evaluation Hardware** | NVIDIA GeForce RTX 4050 Laptop GPU (6GB) | NVIDIA GeForce RTX 4050 Laptop GPU (6GB) | Identical |
+| **Decoding Strategy** | Greedy ($T=0.0$, `max_new_tokens=512`) | Greedy ($T=0.0$, `max_new_tokens=512`) | Identical |
+| **Test Questions Evaluated** | 108 (Spider `ship_1` & `tracking_orders`) | 108 (Spider `ship_1` & `tracking_orders`) | Cross-database held-out |
+| **Execution Accuracy (EX)** | **58.33 %** (63 / 108) | **60.19 %** (65 / 108) | **+1.85 %** (+2 queries) |
+| **Wilson 95% Confidence Interval** | **[48.9 %, 67.2 %]** | **[50.8 %, 68.9 %]** | Overlapping intervals |
+| **Valid SQL Rate (VSR)** | **87.04 %** (94 / 108) | **87.04 %** (94 / 108) | 0.00 % (exact parity) |
+| **Format Adherence Rate (FAR)** | **100.00 %** (108 / 108) | **100.00 %** (108 / 108) | 0.00 % (exact parity) |
+| **Discordant Pairs ($b, c$)** | N/A | $b = 0$, $c = 2$ | 0 regressions, +2 repaired |
+| **Exact McNemar $p$-value** | N/A | $p = 0.5000$ | Not statistically significant |
+| **RL Rollouts in Training** | N/A | 480 completions (30 steps $\times$ 16 comp/step) | Primary run (`RUN-03`) |
+| **Peak Training VRAM** | N/A | 5.1 GB (4-bit NF4 QLoRA, chunked logprobs 512) | Local consumer GPU |
